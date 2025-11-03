@@ -1,0 +1,39 @@
+// Project-wide rules for AI in Cursor (memeic)
+
+Always:
+- Use latest compatible package versions (no pins) in `pubspec.yaml`.
+- Keep a single flavor only; use `FlavorConfig.instance.values` with one default.
+- Fix all lints introduced by edits before finishing.
+- Prefer absolute paths when referencing files.
+- Maintain existing indentation style; do not reformat unrelated code.
+- Remove dead imports/usages and missing-module references on sight.
+- Keep `ApiClient` self-contained (no external app_config/user_service).
+- Use `memeic` package imports, never other app package names.
+- Always use `Logger` instead of `print` for diagnostics.
+- Generate code via `stacked generate` where applicable; don't handwire what generator handles.
+- Keep all view logic in ViewModels; Views only for rendering and event wiring.
+- Use enums for UI states and types (e.g., button states/types) instead of booleans.
+
+Models:
+- Always use `freezed` and `json_serializable` style with `freezed_annotation` for models.
+- Place models under `lib/models/`.
+- Organize by module: e.g., `lib/models/auth/`, `lib/models/user/`, etc.
+- Generate code with `build_runner` (`*.freezed.dart`, `*.g.dart`).
+
+Editing:
+- If adding deps → update `pubspec.yaml` without version pins.
+- If changing helpers → keep `api_client.dart`, `app_error.dart`, `shared_prefs.dart`, `url_provider.dart` consistent.
+- Default logging ON in dev-equivalent settings via `FlavorConfig.values.enableLogging`.
+ - Use `ui/common/` as shared widgets folder (general purpose widgets live here).
+ - Views may have a `widgets/` subfolder for view-specific widgets not shared.
+ - Prefer placeholder assets when referenced assets are not present, do not block.
+
+Testing & CI:
+- Ensure `flutter pub get` resolves with no analyzer errors after changes.
+- Prefer adding small unit tests for new helpers/models when reasonable.
+
+Security:
+- Never log secrets or tokens. If tokens are needed, read from secure storage and redact in logs.
+
+PR Hygiene:
+- Keep edits minimal in scope; avoid unrelated formatting changes.

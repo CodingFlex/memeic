@@ -3,12 +3,14 @@ import 'package:memeic/ui/dialogs/info_alert/info_alert_dialog.dart';
 import 'package:memeic/ui/views/home/home_view.dart';
 import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:memeic/ui/views/onboardingauth/onboardingauth_view.dart';
 // @stacked-import
 
 @StackedApp(
   routes: [
     MaterialRoute(page: HomeView),
-    // @stacked-route
+    MaterialRoute(page: OnboardingauthView),
+// @stacked-route
   ],
   dependencies: [
     LazySingleton(classType: BottomSheetService),

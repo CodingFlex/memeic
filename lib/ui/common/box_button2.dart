@@ -37,7 +37,7 @@ class BoxButton2 extends StatelessWidget {
     this.color = Colors.transparent, // Default to transparent
     this.outlineColor, // Fallbacks handled below
     this.textColor, // Fallbacks handled below
-    this.borderRadius = 6.0,
+    this.borderRadius = 16.0,
     this.isDelete = false,
     this.noBorder = false,
     this.noShadow = false,

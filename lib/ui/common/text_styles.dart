@@ -1,99 +1,83 @@
 import 'package:flutter/material.dart';
-// Removed google_fonts dependency for lints
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTextStyles {
-  static TextStyle heading1(BuildContext context, {Color? color}) => TextStyle(
-        fontFamily: 'Fellix',
-        fontFamilyFallback: const ['Arial', 'sans-serif'],
+  static TextStyle heading1(BuildContext context, {Color? color}) =>
+      GoogleFonts.nunitoSans(
         fontWeight: FontWeight.w600,
         fontSize: 28,
         color: color ?? _textColor(context),
       );
   static TextStyle heading1Red(BuildContext context, {Color? color}) =>
-      TextStyle(
-        fontFamily: 'Fellix',
-        fontFamilyFallback: const ['Arial', 'sans-serif'],
+      GoogleFonts.nunitoSans(
         fontWeight: FontWeight.w800,
         fontSize: 28,
         color: color ?? _textColor(context),
       );
   static TextStyle headingReciept(BuildContext context, {Color? color}) =>
-      TextStyle(
-        fontFamily: 'Fellix',
-        fontFamilyFallback: const ['Arial', 'sans-serif'],
+      GoogleFonts.nunitoSans(
         fontWeight: FontWeight.w500,
         fontSize: 28,
         color: color ?? _textColor(context),
       );
-  static TextStyle fieldFont(BuildContext context, {Color? color}) => TextStyle(
-        fontFamily: 'Fellix',
-        fontFamilyFallback: const ['Arial', 'sans-serif'],
+  static TextStyle fieldFont(BuildContext context, {Color? color}) =>
+      GoogleFonts.nunitoSans(
         fontWeight: FontWeight.w300,
         fontSize: 20,
         color: color ?? _textColor(context),
       );
 
-  static TextStyle heading2(BuildContext context, {Color? color}) => TextStyle(
-        fontFamily: 'Fellix',
-        fontFamilyFallback: const ['Arial', 'sans-serif'],
+  static TextStyle heading2(BuildContext context, {Color? color}) =>
+      GoogleFonts.nunitoSans(
         fontWeight: FontWeight.w600,
         fontSize: 24,
         color: color ?? _textColor(context),
       );
 
-  static TextStyle heading3(BuildContext context, {Color? color}) => TextStyle(
-        fontFamily: 'Fellix',
-        fontFamilyFallback: const ['Arial', 'sans-serif'],
+  static TextStyle heading3(BuildContext context, {Color? color}) =>
+      GoogleFonts.nunitoSans(
         fontWeight: FontWeight.w800,
         fontSize: 20,
         color: color ?? _textColor(context),
       );
 
-  static TextStyle moneyFont(BuildContext context, {Color? color}) => TextStyle(
-        fontFamily: 'Fellix',
-        fontFamilyFallback: const ['Arial', 'sans-serif'],
+  static TextStyle moneyFont(BuildContext context, {Color? color}) =>
+      GoogleFonts.nunitoSans(
         fontWeight: FontWeight.w800,
         fontSize: 20,
         color: color ?? _textColor(context),
       );
 
   static TextStyle moneyFellix(BuildContext context, {Color? color}) =>
-      TextStyle(
-        fontFamily: 'Fellix',
-        fontFamilyFallback: const ['Arial', 'sans-serif'],
+      GoogleFonts.nunitoSans(
         fontWeight: FontWeight.w600,
         fontSize: 30,
         color: color ?? _textColor(context),
       );
 
-  static TextStyle headline(BuildContext context, {Color? color}) => TextStyle(
-        fontFamily: 'Fellix',
-        fontFamilyFallback: const ['Arial', 'sans-serif'],
+  static TextStyle headline(BuildContext context, {Color? color}) =>
+      GoogleFonts.shadowsIntoLight(
         fontWeight: FontWeight.w800,
-        fontSize: 30,
+        fontSize: 40,
         color: color ?? _textColor(context),
       );
 
   static TextStyle subheading(BuildContext context, {Color? color}) =>
-      TextStyle(
-        fontFamily: 'Fellix',
-        fontFamilyFallback: const ['Arial', 'sans-serif'],
+      GoogleFonts.nunitoSans(
         fontWeight: FontWeight.w500,
         fontSize: 16,
         color: color ?? _textColor(context),
       );
 
-  static TextStyle caption(BuildContext context, {Color? color}) => TextStyle(
-        fontFamily: 'Fellix',
-        fontFamilyFallback: const ['Arial', 'sans-serif'],
+  static TextStyle caption(BuildContext context, {Color? color}) =>
+      GoogleFonts.nunitoSans(
         fontWeight: FontWeight.w400,
         fontSize: 14,
         color: color ?? _textColor(context),
       );
 
-  static TextStyle body(BuildContext context, {Color? color}) => TextStyle(
-        fontFamily: 'Fellix',
-        fontFamilyFallback: const ['Arial', 'sans-serif'],
+  static TextStyle body(BuildContext context, {Color? color}) =>
+      GoogleFonts.nunitoSans(
         fontWeight: FontWeight.normal,
         fontSize: 14,
         color: color ?? _textColor(context),

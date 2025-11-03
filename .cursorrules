@@ -13,6 +13,10 @@ Always:
 - Generate code via `stacked generate` where applicable; don't handwire what generator handles.
 - Keep all view logic in ViewModels; Views only for rendering and event wiring.
 - Use enums for UI states and types (e.g., button states/types) instead of booleans.
+- Always create separate files for widgets, don't create multiple views in the same file.
+- Always use `AppTextStyles` for all text styling, never `Theme.of(context).textTheme` directly.
+- Always use FontAwesome icons (`font_awesome_flutter`) instead of Material icons (`Icons.*`).
+- Always use `ui_helpers.dart` for spacing and sizing (e.g., `verticalSpaceSmall`, `horizontalSpaceMedium`, `screenWidth()`, etc.) instead of hardcoded `SizedBox` values.
 
 Models:
 - Always use `freezed` and `json_serializable` style with `freezed_annotation` for models.

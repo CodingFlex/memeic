@@ -11,6 +11,12 @@ dependencies:
     sdk: flutter
   stacked: ^3.4.0
   stacked_services: ^1.1.0
+  dio: 
+  logger: 
+  intl: 
+  shared_preferences: 
+  flutter_secure_storage: 
+  freezed_annotation: 
 
 dev_dependencies:
   build_runner: ^2.4.5

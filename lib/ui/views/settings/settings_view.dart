@@ -22,8 +22,8 @@ class SettingsView extends StackedView<SettingsViewModel> {
       backgroundColor: kcAppBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-            horizontal: getResponsiveHorizontalSpaceMedium(context),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
             vertical: 16,
           ),
           child: Column(
@@ -35,58 +35,61 @@ class SettingsView extends StackedView<SettingsViewModel> {
               ),
               verticalSpaceMedium,
               // User Profile Section
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: kcDarkGreyColor,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: const Color.fromARGB(186, 90, 41, 124),
-                    width: 1,
+              GestureDetector(
+                onTap: viewModel.onProfilePressed,
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: kcDarkGreyColor,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: const Color.fromARGB(186, 90, 41, 124),
+                      width: 1,
+                    ),
                   ),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: const BoxDecoration(
-                        color: kcPrimaryColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Center(
-                        child: FaIcon(
-                          FontAwesomeIcons.user,
-                          color: Colors.white,
-                          size: 28,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 46, 34, 51),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Center(
+                          child: FaIcon(
+                            FontAwesomeIcons.user,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                         ),
                       ),
-                    ),
-                    horizontalSpaceMedium,
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            viewModel.userName,
-                            style: AppTextStyles.heading3(context,
-                                color: Colors.white),
-                          ),
-                          verticalSpaceTiny,
-                          Text(
-                            'Tap to create profile',
-                            style: AppTextStyles.caption(context,
-                                color: Colors.white54),
-                          ),
-                        ],
+                      horizontalSpaceMedium,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              viewModel.userName,
+                              style: AppTextStyles.heading3(context,
+                                  color: Colors.white),
+                            ),
+                            verticalSpaceTiny,
+                            Text(
+                              'Tap to create profile',
+                              style: AppTextStyles.caption(context,
+                                  color: Colors.white54),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const FaIcon(
-                      FontAwesomeIcons.chevronRight,
-                      color: Colors.white54,
-                      size: 16,
-                    ),
-                  ],
+                      const FaIcon(
+                        FontAwesomeIcons.chevronRight,
+                        color: Colors.white54,
+                        size: 16,
+                      ),
+                    ],
+                  ),
                 ),
               ),
               verticalSpaceMedium,
@@ -101,7 +104,8 @@ class SettingsView extends StackedView<SettingsViewModel> {
                     trailing: Switch(
                       value: viewModel.isDarkMode,
                       onChanged: viewModel.toggleDarkMode,
-                      activeThumbColor: kcPrimaryColor,
+                      activeThumbColor: Colors.white,
+                      activeTrackColor: Colors.white.withValues(alpha: 0.3),
                     ),
                   ),
                   SettingsTile(
@@ -111,25 +115,52 @@ class SettingsView extends StackedView<SettingsViewModel> {
                     trailing: Switch(
                       value: viewModel.notificationsEnabled,
                       onChanged: viewModel.toggleNotifications,
-                      activeThumbColor: kcPrimaryColor,
+                      activeThumbColor: Colors.white,
+                      activeTrackColor: Colors.white.withValues(alpha: 0.3),
                     ),
                   ),
                   SettingsTile(
-                    icon: FontAwesomeIcons.wandMagicSparkles,
+                    icon: FontAwesomeIcons.bolt,
                     title: 'AI Suggestions',
                     subtitle: 'Smart recommendations',
                     trailing: Switch(
                       value: viewModel.aiSuggestionsEnabled,
                       onChanged: viewModel.toggleAiSuggestions,
-                      activeThumbColor: kcPrimaryColor,
+                      activeThumbColor: Colors.white,
+                      activeTrackColor: Colors.white.withValues(alpha: 0.3),
                     ),
                   ),
                 ],
               ),
               verticalSpaceMedium,
               // General Section
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'General',
+                    style:
+                        AppTextStyles.caption(context, color: Colors.white54),
+                  ),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: kcDarkGreyColor,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'Preview',
+                      style:
+                          AppTextStyles.caption(context, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+              verticalSpaceSmall,
               SettingsSection(
-                title: 'General',
+                title: '',
                 children: [
                   SettingsTile(
                     icon: FontAwesomeIcons.globe,
@@ -144,109 +175,6 @@ class SettingsView extends StackedView<SettingsViewModel> {
                     onTap: viewModel.onPrivacyPressed,
                   ),
                 ],
-              ),
-              verticalSpaceMedium,
-              // Support Section
-              SettingsSection(
-                title: 'Support',
-                children: [
-                  SettingsTile(
-                    icon: FontAwesomeIcons.circleInfo,
-                    title: 'About',
-                    subtitle: 'Version 1.0.0',
-                    onTap: viewModel.onAboutPressed,
-                  ),
-                  SettingsTile(
-                    icon: FontAwesomeIcons.commentDots,
-                    title: 'Send Feedback',
-                    subtitle: 'Help us improve',
-                    onTap: viewModel.onFeedbackPressed,
-                  ),
-                ],
-              ),
-              verticalSpaceMedium,
-              // Sign Out Button
-              GestureDetector(
-                onTap: viewModel.onSignOut,
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: const Color.fromARGB(186, 90, 41, 124),
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const FaIcon(
-                        FontAwesomeIcons.rightFromBracket,
-                        color: kcPrimaryColor,
-                        size: 18,
-                      ),
-                      horizontalSpaceSmall,
-                      Text(
-                        'Sign Out',
-                        style: AppTextStyles.heading3(context,
-                            color: kcPrimaryColor),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              verticalSpaceSmall,
-              // Reset Onboarding Button
-              GestureDetector(
-                onTap: viewModel.onResetOnboarding,
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const FaIcon(
-                        FontAwesomeIcons.arrowsRotate,
-                        color: Colors.white54,
-                        size: 16,
-                      ),
-                      horizontalSpaceSmall,
-                      Text(
-                        'Reset Onboarding',
-                        style: AppTextStyles.caption(context,
-                            color: Colors.white54),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              verticalSpaceMedium,
-              Center(
-                child: Column(
-                  children: [
-                    const FaIcon(
-                      FontAwesomeIcons.wandMagicSparkles,
-                      color: kcPrimaryColor,
-                      size: 24,
-                    ),
-                    verticalSpaceTiny,
-                    Text(
-                      'Made with magic',
-                      style:
-                          AppTextStyles.caption(context, color: kcPrimaryColor),
-                    ),
-                    verticalSpaceTiny,
-                    Text(
-                      '© 2025 Memeic • Version 1.0.0',
-                      style:
-                          AppTextStyles.caption(context, color: Colors.white54),
-                    ),
-                  ],
-                ),
               ),
               verticalSpaceMedium,
             ],

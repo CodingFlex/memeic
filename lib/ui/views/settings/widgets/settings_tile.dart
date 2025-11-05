@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:memeic/ui/common/app_colors.dart';
 import 'package:memeic/ui/common/text_styles.dart';
 import 'package:memeic/ui/common/ui_helpers.dart';
 
@@ -26,9 +25,8 @@ class SettingsTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           children: [
@@ -36,13 +34,17 @@ class SettingsTile extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: kcDarkGreyColor,
+                color: const Color.fromARGB(255, 46, 34, 51),
                 borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: const Color.fromARGB(186, 90, 41, 124),
+                  width: 1,
+                ),
               ),
               child: Center(
                 child: FaIcon(
                   icon,
-                  color: kcPrimaryColor,
+                  color: Colors.white,
                   size: 18,
                 ),
               ),

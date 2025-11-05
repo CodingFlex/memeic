@@ -62,4 +62,9 @@ class SettingsViewModel extends BaseViewModel {
     _logger.d('Reset onboarding pressed');
     // TODO: Reset onboarding flag and navigate to onboarding
   }
+
+  void onProfilePressed() {
+    _logger.d('Profile pressed');
+    // TODO: Navigate to profile creation/editing
+  }
 }

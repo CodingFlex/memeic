@@ -36,8 +36,8 @@ class MemeDetailView extends StackedView<MemeDetailViewModel> {
           children: [
             // Top Bar with Back and Favorite
             Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: getResponsiveHorizontalSpaceMedium(context),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
                 vertical: 10,
               ),
               child: Row(
@@ -47,17 +47,13 @@ class MemeDetailView extends StackedView<MemeDetailViewModel> {
                     onTap: viewModel.onBackPressed,
                     child: Container(
                       padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: kcPrimaryColor.withOpacity(0.2),
+                      decoration: const BoxDecoration(
+                        color: kcVeryDarkBackgroundColor,
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: kcPrimaryColor,
-                          width: 1,
-                        ),
                       ),
                       child: const FaIcon(
                         FontAwesomeIcons.arrowLeft,
-                        color: kcPrimaryColor,
+                        color: Colors.white,
                         size: 18,
                       ),
                     ),
@@ -66,20 +62,15 @@ class MemeDetailView extends StackedView<MemeDetailViewModel> {
                     onTap: viewModel.toggleFavorite,
                     child: Container(
                       padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: kcPrimaryColor.withOpacity(0.2),
+                      decoration: const BoxDecoration(
+                        color: kcVeryDarkBackgroundColor,
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: kcPrimaryColor,
-                          width: 1,
-                        ),
                       ),
                       child: FaIcon(
                         viewModel.isFavorite
                             ? FontAwesomeIcons.solidHeart
                             : FontAwesomeIcons.heart,
-                        color:
-                            viewModel.isFavorite ? Colors.red : kcPrimaryColor,
+                        color: viewModel.isFavorite ? Colors.red : Colors.white,
                         size: 18,
                       ),
                     ),
@@ -90,8 +81,8 @@ class MemeDetailView extends StackedView<MemeDetailViewModel> {
             // Scrollable Content
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(
-                  horizontal: getResponsiveHorizontalSpaceMedium(context),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,8 +127,11 @@ class MemeDetailView extends StackedView<MemeDetailViewModel> {
                     if (viewModel.meme.title != null)
                       Text(
                         viewModel.meme.title!,
-                        style: AppTextStyles.heading3(context,
-                            color: Colors.white),
+                        textAlign: TextAlign.left,
+                        style: AppTextStyles.heading3(
+                          context,
+                          color: Colors.white,
+                        ),
                       ),
                     verticalSpaceMedium,
                     // Tags
@@ -146,12 +140,13 @@ class MemeDetailView extends StackedView<MemeDetailViewModel> {
                       Wrap(
                         spacing: 12,
                         runSpacing: 12,
+                        alignment: WrapAlignment.start,
                         children: viewModel.meme.tags!.map((tag) {
                           return Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
+                                horizontal: 16, vertical: 10),
                             decoration: BoxDecoration(
-                              color: Colors.transparent,
+                              color: kcPrimaryColor.withValues(alpha: 0.4),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
                                 color: kcPrimaryColor,
@@ -166,7 +161,7 @@ class MemeDetailView extends StackedView<MemeDetailViewModel> {
                           );
                         }).toList(),
                       ),
-                    verticalSpaceLarge,
+                    verticalSpaceMedium,
                     // Action Buttons (2x2 Grid)
                     Row(
                       children: [
@@ -177,7 +172,7 @@ class MemeDetailView extends StackedView<MemeDetailViewModel> {
                             onTap: viewModel.onShare,
                           ),
                         ),
-                        horizontalSpaceMedium,
+                        horizontalSpaceSmall,
                         Expanded(
                           child: _ActionButton(
                             icon: FontAwesomeIcons.download,
@@ -188,6 +183,7 @@ class MemeDetailView extends StackedView<MemeDetailViewModel> {
                       ],
                     ),
                     verticalSpaceSmall,
+                    verticalSpaceTiny,
                     Row(
                       children: [
                         Expanded(
@@ -197,7 +193,7 @@ class MemeDetailView extends StackedView<MemeDetailViewModel> {
                             onTap: viewModel.onSave,
                           ),
                         ),
-                        horizontalSpaceMedium,
+                        horizontalSpaceSmall,
                         Expanded(
                           child: _ActionButton(
                             icon: FontAwesomeIcons.copy,
@@ -209,20 +205,11 @@ class MemeDetailView extends StackedView<MemeDetailViewModel> {
                     ),
                     verticalSpaceLarge,
                     // Similar Memes Section
-                    Row(
-                      children: [
-                        const FaIcon(
-                          FontAwesomeIcons.wandMagicSparkles,
-                          color: kcPrimaryColor,
-                          size: 16,
-                        ),
-                        horizontalSpaceSmall,
-                        Text(
-                          'Similar Memes',
-                          style: AppTextStyles.heading3(context,
-                              color: Colors.white),
-                        ),
-                      ],
+                    horizontalSpaceSmall,
+                    Text(
+                      'Similar Memes',
+                      style:
+                          AppTextStyles.heading3(context, color: Colors.white),
                     ),
                     verticalSpaceMedium,
                     // Similar Memes List
@@ -321,8 +308,8 @@ class MemeDetailView extends StackedView<MemeDetailViewModel> {
                                       Text(
                                         similarMeme.title!,
                                         style: AppTextStyles.caption(context,
-                                                color: Colors.white70)
-                                            .copyWith(fontSize: 11.sp),
+                                                color: Colors.white)
+                                            .copyWith(),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -371,24 +358,25 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
+          color: const Color.fromARGB(166, 34, 39, 51),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: kcPrimaryColor,
+            color: const Color.fromARGB(186, 90, 41, 124),
             width: 1,
           ),
         ),
-        child: Column(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             FaIcon(
               icon,
-              color: kcPrimaryColor,
-              size: 20,
+              color: Colors.white,
+              size: 18,
             ),
-            verticalSpaceTiny,
+            horizontalSpaceSmall,
             Text(
               label,
-              style: AppTextStyles.caption(context, color: Colors.white),
+              style: AppTextStyles.body(context, color: Colors.white),
             ),
           ],
         ),

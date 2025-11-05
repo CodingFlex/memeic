@@ -18,22 +18,42 @@ class SettingsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: AppTextStyles.caption(context, color: Colors.white54),
-        ),
-        verticalSpaceSmall,
+        if (title.isNotEmpty) ...[
+          Text(
+            title,
+            style: AppTextStyles.caption(context, color: Colors.white54),
+          ),
+          verticalSpaceSmall,
+        ],
         Container(
           decoration: BoxDecoration(
             color: kcDarkGreyColor,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: const Color.fromARGB(186, 90, 41, 124),
               width: 1,
             ),
           ),
           child: Column(
-            children: children,
+            children: children.asMap().entries.map((entry) {
+              final index = entry.key;
+              final widget = entry.value;
+              final isLast = index == children.length - 1;
+
+              return Column(
+                children: [
+                  widget,
+                  if (!isLast)
+                    const Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: Color.fromARGB(186, 90, 41, 124),
+                      indent: 16,
+                      endIndent: 16,
+                    ),
+                ],
+              );
+            }).toList(),
           ),
         ),
       ],

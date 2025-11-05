@@ -94,7 +94,7 @@ class HomeView extends StackedView<HomeViewModel> {
                               children: [
                                 Text(
                                   mood.emoji,
-                                  style: TextStyle(fontSize: 14.sp),
+                                  style: TextStyle(fontSize: 16.sp),
                                 ),
                                 const SizedBox(width: 6),
                                 Text(

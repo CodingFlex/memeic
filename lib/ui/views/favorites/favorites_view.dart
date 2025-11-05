@@ -90,8 +90,8 @@ class FavoritesView extends StackedView<FavoritesViewModel> {
                       ),
                     )
                   : GridView.builder(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: getResponsiveHorizontalSpaceMedium(context),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
                         vertical: 16,
                       ),
                       gridDelegate:

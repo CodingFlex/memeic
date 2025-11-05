@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
-import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:memeic/ui/common/app_colors.dart';
 
@@ -15,55 +15,38 @@ class MainNavigationView extends StackedView<MainNavigationViewModel> {
     MainNavigationViewModel viewModel,
     Widget? child,
   ) {
-    return PersistentTabView(
-      tabs: [
-        PersistentTabConfig(
-          screen: viewModel.homeView,
-          item: ItemConfig(
-            icon: const FaIcon(FontAwesomeIcons.house),
-            title: "Home",
-            activeForegroundColor: kcPrimaryColor,
-            inactiveForegroundColor: Colors.white54,
-          ),
-        ),
-        PersistentTabConfig(
-          screen: viewModel.searchView,
-          item: ItemConfig(
-            icon: const FaIcon(FontAwesomeIcons.magnifyingGlass),
-            title: "Search",
-            activeForegroundColor: kcPrimaryColor,
-            inactiveForegroundColor: Colors.white54,
-          ),
-        ),
-        PersistentTabConfig(
-          screen: viewModel.favoritesView,
-          item: ItemConfig(
-            icon: const FaIcon(FontAwesomeIcons.heart),
-            title: "Favorites",
-            activeForegroundColor: kcPrimaryColor,
-            inactiveForegroundColor: Colors.white54,
-          ),
-        ),
-        PersistentTabConfig(
-          screen: viewModel.settingsView,
-          item: ItemConfig(
-            icon: const FaIcon(FontAwesomeIcons.gear),
-            title: "Settings",
-            activeForegroundColor: kcPrimaryColor,
-            inactiveForegroundColor: Colors.white54,
-          ),
-        ),
-      ],
-      navBarBuilder: (navBarConfig) => ClipRect(
-        child: Container(
-          color: kcVeryDarkBackgroundColor,
-          child: Style1BottomNavBar(
-            navBarConfig: navBarConfig,
-            navBarDecoration: const NavBarDecoration(
-              color: kcVeryDarkBackgroundColor,
-              borderRadius: BorderRadius.zero,
+    return Scaffold(
+      body: viewModel.currentView,
+      bottomNavigationBar: Container(
+        color: kcVeryDarkBackgroundColor,
+        constraints: const BoxConstraints(minHeight: 90),
+        child: GNav(
+          backgroundColor: kcVeryDarkBackgroundColor,
+          color: Colors.white54,
+          activeColor: kcPrimaryColor,
+          tabBackgroundColor: kcPrimaryColor.withValues(alpha: 0.1),
+          gap: 8,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          tabs: const [
+            GButton(
+              icon: FontAwesomeIcons.house,
+              text: 'Home',
             ),
-          ),
+            GButton(
+              icon: FontAwesomeIcons.magnifyingGlass,
+              text: 'Search',
+            ),
+            GButton(
+              icon: FontAwesomeIcons.heart,
+              text: 'Favorites',
+            ),
+            GButton(
+              icon: FontAwesomeIcons.gear,
+              text: 'Settings',
+            ),
+          ],
+          selectedIndex: viewModel.currentIndex,
+          onTabChange: (index) => viewModel.setIndex(index),
         ),
       ),
     );

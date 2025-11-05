@@ -29,9 +29,19 @@ class SettingsView extends StackedView<SettingsViewModel> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Settings',
-                style: AppTextStyles.headline(context, color: Colors.white),
+              Row(
+                children: [
+                  const FaIcon(
+                    FontAwesomeIcons.gear,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                  horizontalSpaceSmall,
+                  Text(
+                    'Settings',
+                    style: AppTextStyles.headline(context, color: Colors.white),
+                  ),
+                ],
               ),
               verticalSpaceMedium,
               // User Profile Section

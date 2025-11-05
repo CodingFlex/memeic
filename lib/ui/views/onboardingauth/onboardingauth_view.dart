@@ -19,7 +19,7 @@ class OnboardingauthView extends StackedView<OnboardingauthViewModel> {
     Widget? child,
   ) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(122, 26, 11, 46),
+      backgroundColor: kcAppBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(

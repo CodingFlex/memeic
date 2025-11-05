@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:memeic/ui/common/app_colors.dart';
 import 'package:memeic/ui/common/text_styles.dart';
 
@@ -148,10 +149,15 @@ class BoxButton2 extends StatelessWidget {
                 : SizedBox(
                     height: 20, // Set the desired height
                     width: 20, // Set the desired width
-                    child: CircularProgressIndicator(
-                      strokeWidth: 4,
-                      valueColor: AlwaysStoppedAnimation(
-                        isDelete ? Colors.red : baseColor,
+                    child: Skeletonizer(
+                      enabled: true,
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: baseColor.withOpacity(0.3),
+                          shape: BoxShape.circle,
+                        ),
                       ),
                     ),
                   ),

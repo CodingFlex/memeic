@@ -7,7 +7,9 @@ import 'package:memeic/ui/common/text_styles.dart';
 import 'package:memeic/ui/common/ui_helpers.dart';
 import 'package:memeic/ui/common/meme_card.dart';
 import 'package:memeic/ui/views/search/widgets/search_bar_widget.dart';
-import 'package:memeic/ui/views/search/widgets/mood_chip.dart';
+import 'package:memeic/ui/views/search/widgets/trending_mood_item.dart';
+import 'package:memeic/ui/views/search/widgets/popular_mood_chip.dart';
+import 'package:memeic/ui/views/search/widgets/search_empty_state.dart';
 
 import 'search_viewmodel.dart';
 
@@ -31,140 +33,127 @@ class SearchView extends StackedView<SearchViewModel> {
                 horizontal: 16,
                 vertical: 10,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  SearchBarWidget(
-                    controller: viewModel.searchController,
-                    onChanged: viewModel.onSearchChanged,
-                    onVoiceSearch: viewModel.onVoiceSearch,
-                  ),
-                  verticalSpaceSmall,
-                  if (viewModel.showTrending) ...[
-                    Row(
-                      children: [
-                        const FaIcon(
-                          FontAwesomeIcons.arrowTrendUp,
-                          color: kcPrimaryColor,
-                          size: 16,
-                        ),
-                        horizontalSpaceTiny,
-                        Text(
-                          'Trending Now',
-                          style: AppTextStyles.heading3(context,
-                              color: Colors.white),
-                        ),
-                      ],
-                    ),
-                    verticalSpaceTiny,
-                    SizedBox(
+                  GestureDetector(
+                    onTap: viewModel.onBackPressed,
+                    child: Container(
+                      width: 40,
                       height: 40,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: viewModel.trendingMoods.length,
-                        separatorBuilder: (context, index) =>
-                            horizontalSpaceTiny,
-                        itemBuilder: (context, index) {
-                          final mood = viewModel.trendingMoods[index];
-                          return MoodChip(
-                            emoji: mood.emoji,
-                            label: mood.label,
-                            percentage: mood.percentage,
-                            onTap: () => viewModel.onMoodSelected(mood),
-                          );
-                        },
+                      decoration: const BoxDecoration(
+                        color: kcDarkGreyColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Center(
+                        child: FaIcon(
+                          FontAwesomeIcons.arrowLeft,
+                          color: Colors.white,
+                          size: 18,
+                        ),
                       ),
                     ),
-                    verticalSpaceSmall,
-                  ],
-                  if (!viewModel.showTrending) ...[
-                    Text(
-                      'Popular moods',
-                      style:
-                          AppTextStyles.heading3(context, color: Colors.white),
+                  ),
+                  horizontalSpaceSmall,
+                  Expanded(
+                    child: SearchBarWidget(
+                      controller: viewModel.searchController,
+                      onChanged: viewModel.onSearchChanged,
+                      onVoiceSearch: viewModel.onVoiceSearch,
                     ),
-                    verticalSpaceTiny,
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: viewModel.popularMoods.map((mood) {
-                        return MoodChip(
-                          emoji: mood.emoji,
-                          label: mood.label,
-                          onTap: () => viewModel.onMoodSelected(mood),
-                        );
-                      }).toList(),
-                    ),
-                    verticalSpaceMedium,
-                  ],
+                  ),
                 ],
               ),
             ),
             Expanded(
-              child: viewModel.isLoading
-                  ? Skeletonizer(
-                      enabled: true,
-                      child: GridView.builder(
-                        padding: EdgeInsets.symmetric(
-                          horizontal:
-                              getResponsiveHorizontalSpaceMedium(context),
-                          vertical: 16,
-                        ),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 0.75,
-                        ),
-                        itemCount: 8,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: kcMediumGrey,
-                              borderRadius: BorderRadius.circular(12),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (viewModel.showTrending && !viewModel.isLoading) ...[
+                      Row(
+                        children: [
+                          const FaIcon(
+                            FontAwesomeIcons.arrowTrendUp,
+                            color: kcPrimaryColorLight,
+                            size: 16,
+                          ),
+                          horizontalSpaceTiny,
+                          Text(
+                            'Trending Now',
+                            style: AppTextStyles.heading3(context,
+                                color: Colors.white),
+                          ),
+                        ],
+                      ),
+                      verticalSpaceSmall,
+                      ...viewModel.trendingMoods.map((mood) {
+                        return TrendingMoodItem(
+                          emoji: mood.emoji,
+                          label: mood.label,
+                          percentage: mood.percentage ?? 0,
+                          onTap: () => viewModel.onMoodSelected(mood),
+                        );
+                      }),
+                      verticalSpaceMedium,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Popular moods',
+                            style: AppTextStyles.heading3(context,
+                                color: Colors.white),
+                          ),
+                          GestureDetector(
+                            onTap: viewModel.onPreviewTap,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: kcMediumGrey,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                'Preview',
+                                style: AppTextStyles.caption(context,
+                                    color: Colors.white),
+                              ),
                             ),
+                          ),
+                        ],
+                      ),
+                      verticalSpaceSmall,
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final chipWidth = (constraints.maxWidth - 16) / 3;
+                          return Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: viewModel.popularMoods.map((mood) {
+                              return SizedBox(
+                                width: chipWidth,
+                                child: PopularMoodChip(
+                                  label: mood.label,
+                                  onTap: () => viewModel.onMoodSelected(mood),
+                                ),
+                              );
+                            }).toList(),
                           );
                         },
                       ),
-                    )
-                  : viewModel.memes.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(32),
-                                decoration: BoxDecoration(
-                                  color: kcPrimaryColor.withOpacity(0.1),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const FaIcon(
-                                  FontAwesomeIcons.magnifyingGlass,
-                                  color: kcPrimaryColor,
-                                  size: 48,
-                                ),
-                              ),
-                              verticalSpaceMedium,
-                              Text(
-                                'Search or use voice to find',
-                                style: AppTextStyles.subheading(context,
-                                    color: Colors.white70),
-                              ),
-                              verticalSpaceTiny,
-                              Text(
-                                'the perfect reaction',
-                                style: AppTextStyles.subheading(context,
-                                    color: Colors.white70),
-                              ),
-                            ],
-                          ),
-                        )
-                      : GridView.builder(
-                          padding: EdgeInsets.symmetric(
-                            horizontal:
-                                getResponsiveHorizontalSpaceMedium(context),
-                            vertical: 16,
+                      verticalSpaceLarge,
+                    ],
+                    if (viewModel.isLoading)
+                      Skeletonizer(
+                        enabled: true,
+                        child: GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 10,
                           ),
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
@@ -173,18 +162,55 @@ class SearchView extends StackedView<SearchViewModel> {
                             mainAxisSpacing: 12,
                             childAspectRatio: 0.75,
                           ),
-                          itemCount: viewModel.memes.length,
+                          itemCount: 8,
                           itemBuilder: (context, index) {
-                            final meme = viewModel.memes[index];
-                            return MemeCard(
-                              imageUrl: meme.imageUrl,
-                              onTap: () => viewModel.onMemePressed(meme),
-                              onFavorite: () =>
-                                  viewModel.toggleFavorite(meme.id),
-                              isFavorite: viewModel.isFavorite(meme.id),
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: kcMediumGrey,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             );
                           },
                         ),
+                      )
+                    else if (!viewModel.showTrending)
+                      viewModel.memes.isEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 120,
+                              ),
+                              child: SearchEmptyState(
+                                onPreviewTap: viewModel.onPreviewTap,
+                              ),
+                            )
+                          : GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 10,
+                              ),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                                childAspectRatio: 0.75,
+                              ),
+                              itemCount: viewModel.memes.length,
+                              itemBuilder: (context, index) {
+                                final meme = viewModel.memes[index];
+                                return MemeCard(
+                                  imageUrl: meme.imageUrl,
+                                  onTap: () => viewModel.onMemePressed(meme),
+                                  onFavorite: () =>
+                                      viewModel.toggleFavorite(meme.id),
+                                  isFavorite: viewModel.isFavorite(meme.id),
+                                );
+                              },
+                            ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 import 'package:logger/logger.dart';
+import 'package:memeic/app/app.locator.dart';
 
 class MemeModel {
   final String id;
@@ -32,6 +34,7 @@ class MoodModel {
 
 class SearchViewModel extends BaseViewModel {
   final _logger = Logger();
+  final _navigationService = locator<NavigationService>();
   final searchController = TextEditingController();
 
   bool _isLoading = false;
@@ -53,16 +56,16 @@ class SearchViewModel extends BaseViewModel {
   ];
 
   final List<MoodModel> popularMoods = [
-    MoodModel(emoji: '😂', label: 'Funny'),
-    MoodModel(emoji: '🤔', label: 'Relatable'),
-    MoodModel(emoji: '😎', label: 'Confused'),
-    MoodModel(emoji: '😊', label: 'Happy'),
-    MoodModel(emoji: '😈', label: 'Savage'),
-    MoodModel(emoji: '🥰', label: 'Wholesome'),
-    MoodModel(emoji: '😢', label: 'Sad'),
-    MoodModel(emoji: '😮', label: 'Surprised'),
-    MoodModel(emoji: '🤯', label: 'Thinking'),
-    MoodModel(emoji: '🎉', label: 'Celebrating'),
+    MoodModel(emoji: '', label: 'Funny'),
+    MoodModel(emoji: '', label: 'Relatable'),
+    MoodModel(emoji: '', label: 'Confused'),
+    MoodModel(emoji: '', label: 'Happy'),
+    MoodModel(emoji: '', label: 'Savage'),
+    MoodModel(emoji: '', label: 'Wholesome'),
+    MoodModel(emoji: '', label: 'Sad'),
+    MoodModel(emoji: '', label: 'Surprised'),
+    MoodModel(emoji: '', label: 'Thinking'),
+    MoodModel(emoji: '', label: 'Celebrating'),
   ];
 
   @override
@@ -170,5 +173,18 @@ class SearchViewModel extends BaseViewModel {
   void onMemePressed(MemeModel meme) {
     _logger.d('Meme pressed: ${meme.title}');
     // TODO: Navigate to meme detail view or show share options
+  }
+
+  void onBackPressed() {
+    _logger.d('Back button pressed');
+    // Since SearchView is part of MainNavigationView, 
+    // back button navigates to home or does nothing
+    // This is mainly for design compliance
+    _navigationService.back();
+  }
+
+  void onPreviewTap() {
+    _logger.d('Preview button tapped');
+    // TODO: Implement preview functionality
   }
 }

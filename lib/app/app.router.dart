@@ -118,7 +118,10 @@ class StackedRouter extends _i1.RouterBase {
       final args = data.getArgs<MemeDetailViewArguments>(nullOk: false);
       return _i9.MaterialPageRoute<dynamic>(
         builder: (context) => _i8.MemeDetailView(
-            key: args.key, meme: args.meme, favoriteIds: args.favoriteIds),
+            key: args.key,
+            meme: args.meme,
+            favoriteIds: args.favoriteIds,
+            heroTag: args.heroTag),
         settings: data,
       );
     },
@@ -136,6 +139,7 @@ class MemeDetailViewArguments {
     this.key,
     required this.meme,
     this.favoriteIds,
+    this.heroTag,
   });
 
   final _i9.Key? key;
@@ -144,9 +148,11 @@ class MemeDetailViewArguments {
 
   final Set<String>? favoriteIds;
 
+  final String? heroTag;
+
   @override
   String toString() {
-    return '{"key": "$key", "meme": "$meme", "favoriteIds": "$favoriteIds"}';
+    return '{"key": "$key", "meme": "$meme", "favoriteIds": "$favoriteIds", "heroTag": "$heroTag"}';
   }
 
   @override
@@ -154,12 +160,16 @@ class MemeDetailViewArguments {
     if (identical(this, other)) return true;
     return other.key == key &&
         other.meme == meme &&
-        other.favoriteIds == favoriteIds;
+        other.favoriteIds == favoriteIds &&
+        other.heroTag == heroTag;
   }
 
   @override
   int get hashCode {
-    return key.hashCode ^ meme.hashCode ^ favoriteIds.hashCode;
+    return key.hashCode ^
+        meme.hashCode ^
+        favoriteIds.hashCode ^
+        heroTag.hashCode;
   }
 }
 
@@ -252,6 +262,7 @@ extension NavigatorStateExtension on _i11.NavigationService {
     _i9.Key? key,
     required _i10.MemeModel meme,
     Set<String>? favoriteIds,
+    String? heroTag,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -260,7 +271,7 @@ extension NavigatorStateExtension on _i11.NavigationService {
   }) async {
     return navigateTo<dynamic>(Routes.memeDetailView,
         arguments: MemeDetailViewArguments(
-            key: key, meme: meme, favoriteIds: favoriteIds),
+            key: key, meme: meme, favoriteIds: favoriteIds, heroTag: heroTag),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -355,6 +366,7 @@ extension NavigatorStateExtension on _i11.NavigationService {
     _i9.Key? key,
     required _i10.MemeModel meme,
     Set<String>? favoriteIds,
+    String? heroTag,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -363,7 +375,7 @@ extension NavigatorStateExtension on _i11.NavigationService {
   }) async {
     return replaceWith<dynamic>(Routes.memeDetailView,
         arguments: MemeDetailViewArguments(
-            key: key, meme: meme, favoriteIds: favoriteIds),
+            key: key, meme: meme, favoriteIds: favoriteIds, heroTag: heroTag),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

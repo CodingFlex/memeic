@@ -15,6 +15,14 @@ class FlavorValues {
     this.enableLogging = true,
     this.apiKeys = const {},
   });
+
+  /// Get Supabase URL from apiKeys.
+  /// Returns empty string if not configured.
+  String get supabaseUrl => apiKeys['supabase_url'] ?? '';
+
+  /// Get Supabase anonymous key from apiKeys.
+  /// Returns empty string if not configured.
+  String get supabaseAnonKey => apiKeys['supabase_anon_key'] ?? '';
 }
 
 class FlavorConfig {

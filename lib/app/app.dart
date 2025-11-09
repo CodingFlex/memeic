@@ -9,6 +9,9 @@ import 'package:memeic/ui/views/search/search_view.dart';
 import 'package:memeic/ui/views/favorites/favorites_view.dart';
 import 'package:memeic/ui/views/settings/settings_view.dart';
 import 'package:memeic/ui/views/meme_detail/meme_detail_view.dart';
+import 'package:memeic/services/auth_service.dart';
+import 'package:memeic/services/supabase_service.dart';
+import 'package:memeic/ui/common/toast.dart';
 // @stacked-import
 
 @StackedApp(
@@ -20,12 +23,15 @@ import 'package:memeic/ui/views/meme_detail/meme_detail_view.dart';
     MaterialRoute(page: FavoritesView),
     MaterialRoute(page: SettingsView),
     MaterialRoute(page: MemeDetailView),
-// @stacked-route
+    // @stacked-route
   ],
   dependencies: [
     LazySingleton(classType: BottomSheetService),
     LazySingleton(classType: DialogService),
     LazySingleton(classType: NavigationService),
+    LazySingleton(classType: SupabaseService),
+    LazySingleton(classType: AuthService),
+    LazySingleton(classType: ToastService),
     // @stacked-service
   ],
   bottomsheets: [

@@ -10,19 +10,22 @@ import 'package:memeic/helpers/flavor_config.dart';
 import 'package:memeic/services/supabase_service.dart';
 import 'package:memeic/services/auth_service.dart';
 import 'package:toastification/toastification.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize FlavorConfig with Supabase credentials
-  // TODO: Replace with your actual Supabase anon key from the dashboard
+  // Load environment variables from .env file
+  await dotenv.load(fileName: '.env');
+
+  // Initialize FlavorConfig with Supabase credentials from .env
   FlavorConfig(
-    values: const FlavorValues(
+    values: FlavorValues(
       appTitle: 'Memeic',
       enableLogging: true,
       apiKeys: {
-        'supabase_url': 'https://gbxtvrbwfsxsccgqtrja.supabase.co',
-        'supabase_anon_key': '', // Add your anon key here
+        'supabase_url': dotenv.env['SUPABASE_URL'] ?? '',
+        'supabase_anon_key': dotenv.env['SUPABASE_ANON_KEY'] ?? '',
       },
     ),
   );

@@ -7,41 +7,27 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:sizer/sizer.dart';
 import 'package:memeic/ui/common/app_colors.dart';
 import 'package:memeic/helpers/flavor_config.dart';
-import 'package:memeic/services/supabase_service.dart';
-import 'package:memeic/services/auth_service.dart';
+import 'package:memeic/services/firebase_service.dart';
 import 'package:toastification/toastification.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load environment variables from .env file
-  await dotenv.load(fileName: '.env');
-
-  // Initialize FlavorConfig with Supabase credentials from .env
+  // Initialize FlavorConfig
   FlavorConfig(
-    values: FlavorValues(
+    values: const FlavorValues(
       appTitle: 'Memeic',
       enableLogging: true,
-      apiKeys: {
-        'supabase_url': dotenv.env['SUPABASE_URL'] ?? '',
-        'supabase_anon_key': dotenv.env['SUPABASE_ANON_KEY'] ?? '',
-      },
+      apiKeys: {},
     ),
   );
 
   // Setup dependency injection first to get services
   await setupLocator();
 
-  // Initialize Supabase service (registered in locator)
-  final supabaseService = locator<SupabaseService>();
-  await supabaseService.initialize();
-
-  // Manually register AuthService with SupabaseService dependency
-  // (Stacked generator doesn't automatically wire constructor dependencies)
-  locator.registerLazySingleton<AuthService>(
-    () => AuthService(locator<SupabaseService>()),
-  );
+  // Initialize Firebase service
+  final firebaseService = locator<FirebaseService>();
+  await firebaseService.initialize();
 
   setupDialogUi();
   setupBottomSheetUi();

@@ -21,9 +21,9 @@ class OnboardingauthViewModel extends BaseViewModel {
       _logger.i('Google sign-in tapped');
       setBusy(true);
 
-      final response = await _authService.signInWithGoogle();
+      final user = await _authService.signInWithGoogle();
 
-      _logger.i('Google sign-in successful: ${response.user?.email}');
+      _logger.i('Google sign-in successful: ${user.email}');
       _toastService.showSuccess(message: 'Signed in with Google successfully');
       _navigateToMainApp();
     } on AppError catch (e) {
@@ -48,9 +48,9 @@ class OnboardingauthViewModel extends BaseViewModel {
       _logger.i('Apple sign-in tapped');
       setBusy(true);
 
-      final response = await _authService.signInWithApple();
+      final user = await _authService.signInWithApple();
 
-      _logger.i('Apple sign-in successful: ${response.user?.email}');
+      _logger.i('Apple sign-in successful: ${user.email}');
       _toastService.showSuccess(message: 'Signed in with Apple successfully');
       _navigateToMainApp();
     } on AppError catch (e) {

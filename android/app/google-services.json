@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "590656034961",
+    "project_id": "memeic-777dd",
+    "storage_bucket": "memeic-777dd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:590656034961:android:2649df668c0ebc7149c730",
+        "android_client_info": {
+          "package_name": "com.memeic.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "590656034961-toisjujntrmmfaspgh8scsgalbe6bd0q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOsiarVF_jXxfme2jPhV4GqusXIdmCmzQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "590656034961-toisjujntrmmfaspgh8scsgalbe6bd0q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "590656034961-srbh8j8n1sjf1m9l03gi039v7cpevp8g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.memeic.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

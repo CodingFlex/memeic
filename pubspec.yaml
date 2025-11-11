@@ -29,7 +29,8 @@ dependencies:
   flutter_staggered_grid_view:
   heroine: ^0.5.0+2
   skeletonizer:
-  supabase_flutter: ^2.10.3
+  firebase_core:
+  firebase_auth:
   google_sign_in: ^6.2.1
   sign_in_with_apple: ^6.1.3
   crypto: ^3.0.6

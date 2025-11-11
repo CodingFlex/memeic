@@ -9,7 +9,6 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:sizer/sizer.dart';
 import 'package:memeic/ui/common/app_colors.dart';
 import 'package:memeic/helpers/flavor_config.dart';
-import 'package:memeic/services/firebase_service.dart';
 import 'package:toastification/toastification.dart';
 
 Future<void> main() async {
@@ -42,7 +41,7 @@ class MainApp extends StatelessWidget {
       builder: (context, orientation, deviceType) {
         return ToastificationWrapper(
           child: MaterialApp(
-            initialRoute: Routes.onboardingauthView,
+            initialRoute: Routes.splashView,
             onGenerateRoute: StackedRouter().onGenerateRoute,
             navigatorKey: StackedService.navigatorKey,
             navigatorObservers: [StackedService.routeObserver],

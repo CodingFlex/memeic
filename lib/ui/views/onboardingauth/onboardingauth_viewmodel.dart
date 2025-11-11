@@ -12,6 +12,7 @@ class OnboardingauthViewModel extends BaseViewModel {
   final _navigationService = locator<NavigationService>();
   final _authService = locator<AuthService>();
   final _toastService = locator<ToastService>();
+  bool get isOAuthBusy => busy('Oauth');
 
   /// Handle Google sign-in.
   ///
@@ -19,7 +20,7 @@ class OnboardingauthViewModel extends BaseViewModel {
   Future<void> onGoogleTapped() async {
     try {
       _logger.i('Google sign-in tapped');
-      setBusy(true);
+      setBusyForObject('Oauth', true);
 
       final user = await _authService.signInWithGoogle();
 
@@ -36,7 +37,7 @@ class OnboardingauthViewModel extends BaseViewModel {
       _toastService.showError(message: errorMessage);
       setError(errorMessage);
     } finally {
-      setBusy(false);
+      setBusyForObject('Oauth', false);
     }
   }
 
@@ -46,7 +47,7 @@ class OnboardingauthViewModel extends BaseViewModel {
   Future<void> onAppleTapped() async {
     try {
       _logger.i('Apple sign-in tapped');
-      setBusy(true);
+      setBusyForObject('Oauth', true);
 
       final user = await _authService.signInWithApple();
 
@@ -63,9 +64,11 @@ class OnboardingauthViewModel extends BaseViewModel {
       _toastService.showError(message: errorMessage);
       setError(errorMessage);
     } finally {
-      setBusy(false);
+      setBusyForObject('Oauth', false);
     }
   }
+
+  /// Check if OAuth authentication is busy (Google or Apple).
 
   /// Handle email sign-in.
   ///

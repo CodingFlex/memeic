@@ -8,7 +8,7 @@ enum Button2Type { primary, secondary, danger }
 
 enum Button2State { enabled, disabled, loading }
 
-class BoxButton2 extends StatelessWidget {
+class BoxButton2 extends StatefulWidget {
   final String title;
   final Button2Type type;
   final Button2State state;
@@ -45,15 +45,22 @@ class BoxButton2 extends StatelessWidget {
   });
 
   @override
+  State<BoxButton2> createState() => _BoxButton2State();
+}
+
+class _BoxButton2State extends State<BoxButton2> {
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
     // Define delete styling
     const Color deleteOutlineColor = Colors.red;
     const Color deleteTextColor = Colors.red;
 
     // Determine base color from type if color not provided
-    final Color baseColor = color ??
+    final Color baseColor = widget.color ??
         () {
-          switch (isDelete ? Button2Type.danger : type) {
+          switch (widget.isDelete ? Button2Type.danger : widget.type) {
             case Button2Type.primary:
               return kcPrimaryColor;
             case Button2Type.secondary:
@@ -63,82 +70,111 @@ class BoxButton2 extends StatelessWidget {
           }
         }();
 
-    final bool isDisabled = state == Button2State.disabled;
-    final bool isLoading = state == Button2State.loading;
+    final bool isDisabled = widget.state == Button2State.disabled;
+    final bool isLoading = widget.state == Button2State.loading;
+    final bool isEnabled = widget.state == Button2State.enabled;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 350),
-      width: width,
-      height: height,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: color ?? Colors.white, // Keep existing default behavior
-        borderRadius: BorderRadius.circular(
-          borderRadius,
-        ), // Use the provided border radius
-        border: noBorder
-            ? null // No border if noBorder is true
-            : (outlineColor == null && textColor == null)
-                ? null // No border if both are null
-                : Border.all(
-                    color: isDelete
-                        ? deleteOutlineColor
-                        : isDisabled
-                            ? kcMediumGrey
-                            : (outlineColor ?? baseColor),
-                    width: 1,
-                  ),
-        // Add shadow when color is white for better visibility in light mode, unless noShadow is true
-        boxShadow: noShadow
-            ? null
-            : (color == Colors.white
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                      spreadRadius: 0,
-                    ),
-                  ]
-                : null),
-      ),
-      child: Material(
-        color: Colors.transparent, // Make the Material widget transparent
-        child: InkWell(
-          borderRadius: BorderRadius.circular(
-            borderRadius,
-          ), // Match the button's border radius
-          onTap: (state == Button2State.enabled) ? onTap : null,
-          splashColor: kcPrimaryColor.withOpacity(
-            0.1,
-          ), // Disable tap if button is disabled or busy
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(widget.borderRadius),
+        onTapDown: isEnabled
+            ? (_) {
+                setState(() {
+                  _isPressed = true;
+                });
+              }
+            : null,
+        onTapUp: isEnabled
+            ? (_) {
+                setState(() {
+                  _isPressed = false;
+                });
+              }
+            : null,
+        onTapCancel: isEnabled
+            ? () {
+                setState(() {
+                  _isPressed = false;
+                });
+              }
+            : null,
+        onTap: isEnabled && widget.onTap != null
+            ? () {
+                widget.onTap!();
+              }
+            : null,
+        splashColor: kcPrimaryColor.withOpacity(0.1),
+        highlightColor: kcPrimaryColor.withOpacity(0.05),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          curve: Curves.easeInOut,
+          transform: Matrix4.identity()
+            ..scale(_isPressed ? 0.96 : 1.0)
+            ..translate(0.0, _isPressed ? 2.0 : 0.0),
+          width: widget.width,
+          height: widget.height,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color:
+                widget.color ?? Colors.white, // Keep existing default behavior
+            borderRadius: BorderRadius.circular(
+              widget.borderRadius,
+            ), // Use the provided border radius
+            border: widget.noBorder
+                ? null // No border if noBorder is true
+                : (widget.outlineColor == null && widget.textColor == null)
+                    ? null // No border if both are null
+                    : Border.all(
+                        color: widget.isDelete
+                            ? deleteOutlineColor
+                            : isDisabled
+                                ? kcMediumGrey
+                                : (widget.outlineColor ?? baseColor),
+                        width: 1,
+                      ),
+            // Add shadow when color is white for better visibility in light mode, unless noShadow is true
+            boxShadow: widget.noShadow
+                ? null
+                : (widget.color == Colors.white
+                    ? [
+                        BoxShadow(
+                          color:
+                              Colors.black.withOpacity(_isPressed ? 0.05 : 0.1),
+                          blurRadius: _isPressed ? 2 : 4,
+                          offset: Offset(0, _isPressed ? 1 : 2),
+                          spreadRadius: 0,
+                        ),
+                      ]
+                    : null),
+          ),
           child: Container(
-            width: width,
-            height: height,
+            width: widget.width,
+            height: widget.height,
             alignment: Alignment.center,
             child: !isLoading
                 ? Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (leading != null) leading!,
-                      if (leading != null) const SizedBox(width: 5),
+                      if (widget.leading != null) widget.leading!,
+                      if (widget.leading != null) const SizedBox(width: 5),
                       Flexible(
                         child: Text(
-                          state == Button2State.loading
+                          widget.state == Button2State.loading
                               ? 'Processing...'
-                              : title,
-                          style: textStyle ??
+                              : widget.title,
+                          style: widget.textStyle ??
                               AppTextStyles.heading3(context).copyWith(
                                 fontSize: 16.sp,
                                 fontWeight:
                                     FontWeight.w700, // Default font weight
-                                color: isDelete
+                                color: widget.isDelete
                                     ? deleteTextColor
                                     : isDisabled
                                         ? kcMediumGrey
-                                        : (textColor ??
-                                            (outlineColor == null &&
-                                                    textColor == null
+                                        : (widget.textColor ??
+                                            (widget.outlineColor == null &&
+                                                    widget.textColor == null
                                                 ? Colors.black
                                                 : baseColor)),
                               ),

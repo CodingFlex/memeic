@@ -3,6 +3,7 @@ import 'package:memeic/ui/dialogs/info_alert/info_alert_dialog.dart';
 import 'package:memeic/ui/views/home/home_view.dart';
 import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:memeic/ui/views/splash/splash_view.dart';
 import 'package:memeic/ui/views/onboardingauth/onboardingauth_view.dart';
 import 'package:memeic/ui/views/main_navigation/main_navigation_view.dart';
 import 'package:memeic/ui/views/search/search_view.dart';
@@ -16,7 +17,8 @@ import 'package:memeic/ui/common/toast.dart';
 
 @StackedApp(
   routes: [
-    MaterialRoute(page: OnboardingauthView, initial: true),
+    MaterialRoute(page: SplashView, initial: true),
+    MaterialRoute(page: OnboardingauthView),
     MaterialRoute(page: MainNavigationView),
     MaterialRoute(page: HomeView),
     MaterialRoute(page: SearchView),

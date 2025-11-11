@@ -12,6 +12,7 @@ import 'package:memeic/ui/views/settings/settings_view.dart';
 import 'package:memeic/ui/views/meme_detail/meme_detail_view.dart';
 import 'package:memeic/services/auth_service.dart';
 import 'package:memeic/services/firebase_service.dart';
+import 'package:memeic/services/hive_service.dart';
 import 'package:memeic/ui/common/toast.dart';
 // @stacked-import
 
@@ -33,6 +34,7 @@ import 'package:memeic/ui/common/toast.dart';
     LazySingleton(classType: NavigationService),
     LazySingleton(classType: FirebaseService),
     LazySingleton(classType: AuthService),
+    LazySingleton(classType: HiveService),
     LazySingleton(classType: ToastService),
     // @stacked-service
   ],

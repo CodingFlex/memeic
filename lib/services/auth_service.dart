@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:dio/dio.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:crypto/crypto.dart';
 import 'package:logger/logger.dart';
 import 'package:memeic/helpers/app_error.dart';
+import 'package:memeic/helpers/flavor_config.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthService {
@@ -56,11 +58,20 @@ class AuthService {
         idToken: idToken,
       );
 
-      if (response.user == null) {
+      final user = response.user;
+      if (user == null) {
         throw Exception('Failed to authenticate with Supabase');
       }
 
-      return response.user!;
+      // Save or update user profile in 'profiles' table
+      await _supabase.from('profiles').upsert({
+        'id': user.id,
+        'username': googleUser.displayName,
+        'avatar_url': googleUser.photoUrl,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+
+      return user;
     } catch (e, stackTrace) {
       _logger.e('Google sign-in failed', e, stackTrace);
       throw AppError.create(

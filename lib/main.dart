@@ -1,8 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:memeic/app/app.bottomsheets.dart';
 import 'package:memeic/app/app.dialogs.dart';
 import 'package:memeic/app/app.locator.dart';
 import 'package:memeic/app/app.router.dart';
+import 'package:memeic/firebase_options.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:sizer/sizer.dart';
 import 'package:memeic/ui/common/app_colors.dart';
@@ -12,6 +14,7 @@ import 'package:toastification/toastification.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Initialize FlavorConfig
   FlavorConfig(
@@ -24,10 +27,6 @@ Future<void> main() async {
 
   // Setup dependency injection first to get services
   await setupLocator();
-
-  // Initialize Firebase service
-  final firebaseService = locator<FirebaseService>();
-  await firebaseService.initialize();
 
   setupDialogUi();
   setupBottomSheetUi();

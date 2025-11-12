@@ -1,9 +1,13 @@
 import 'package:stacked/stacked.dart';
 import 'package:logger/logger.dart';
+import 'package:memeic/app/app.locator.dart';
+import 'package:memeic/services/hive_service.dart';
+import 'package:memeic/helpers/meme_converter.dart';
 import 'package:memeic/ui/views/search/search_viewmodel.dart';
 
 class FavoritesViewModel extends BaseViewModel {
   final _logger = Logger();
+  final _hiveService = locator<HiveService>();
 
   List<MemeModel> _favoriteMemes = [];
   List<MemeModel> get favoriteMemes => _favoriteMemes;
@@ -12,49 +16,56 @@ class FavoritesViewModel extends BaseViewModel {
     _loadFavorites();
   }
 
+  /// Load favorites from Hive local storage
+  ///
+  /// How it works:
+  /// 1. Gets all favorites from Hive (stored locally on device)
+  /// 2. Converts them from Maps to MemeModel objects
+  /// 3. Updates the UI with the favorite memes
+  ///
+  /// This is called when the Favorites screen loads
   Future<void> _loadFavorites() async {
     try {
-      // Simulate loading favorites from storage
-      await Future.delayed(const Duration(milliseconds: 500));
+      setBusy(true);
 
-      // For demo purposes, pre-populate with some memes
-      _favoriteMemes = [
-        MemeModel(
-          id: 'fav_1',
-          imageUrl: 'https://i.imgflip.com/30b1gx.jpg',
-          title: 'Surprised Pikachu',
-        ),
-        MemeModel(
-          id: 'fav_2',
-          imageUrl: 'https://i.imgflip.com/26am.jpg',
-          title: 'Drake Hotline Bling',
-        ),
-        MemeModel(
-          id: 'fav_3',
-          imageUrl: 'https://i.imgflip.com/5gimtn.jpg',
-          title: 'Bernie Sanders',
-        ),
-        MemeModel(
-          id: 'fav_4',
-          imageUrl: 'https://i.imgflip.com/1ur9b0.jpg',
-          title: 'Leonardo Dicaprio Cheers',
-        ),
-        MemeModel(
-          id: 'fav_5',
-          imageUrl: 'https://i.imgflip.com/1g8my4.jpg',
-          title: 'Distracted Boyfriend',
-        ),
-      ];
+      // Get all favorites from Hive local storage
+      // Hive returns a list of Maps (raw data format)
+      final favoritesData = _hiveService.getAllFavorites();
+
+      // Convert Maps to MemeModel objects using our helper
+      // Think of this as: "Take the raw data and make it usable MemeModels"
+      _favoriteMemes = MemeConverter.fromMapList(favoritesData);
+
+      _logger.d('Loaded ${_favoriteMemes.length} favorites from Hive');
       notifyListeners();
-    } catch (e) {
-      _logger.e('Error loading favorites: $e');
+    } catch (e, stackTrace) {
+      _logger.e('Error loading favorites: $e', e, stackTrace);
+    } finally {
+      setBusy(false);
     }
   }
 
-  void toggleFavorite(String memeId) {
-    _favoriteMemes.removeWhere((meme) => meme.id == memeId);
-    _logger.d('Removed from favorites: $memeId');
-    notifyListeners();
+  /// Remove a meme from favorites
+  ///
+  /// How it works:
+  /// 1. Removes the meme from Hive local storage
+  /// 2. Removes it from the UI list
+  /// 3. Updates the UI
+  ///
+  /// This is called when user taps the unfavorite button
+  Future<void> toggleFavorite(String memeId) async {
+    try {
+      // Remove from Hive local storage
+      await _hiveService.removeFavorite(memeId);
+
+      // Remove from UI list
+      _favoriteMemes.removeWhere((meme) => meme.id == memeId);
+
+      _logger.d('Removed from favorites: $memeId');
+      notifyListeners();
+    } catch (e, stackTrace) {
+      _logger.e('Error removing favorite: $e', e, stackTrace);
+    }
   }
 
   void onMemePressed(MemeModel meme) {

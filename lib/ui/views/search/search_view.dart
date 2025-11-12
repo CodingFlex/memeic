@@ -203,7 +203,7 @@ class SearchView extends StackedView<SearchViewModel> {
                                   imageUrl: meme.imageUrl,
                                   onTap: () => viewModel.onMemePressed(meme),
                                   onFavorite: () =>
-                                      viewModel.toggleFavorite(meme.id),
+                                      viewModel.toggleFavorite(meme),
                                   isFavorite: viewModel.isFavorite(meme.id),
                                 );
                               },

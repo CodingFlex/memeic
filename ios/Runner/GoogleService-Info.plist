@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>590656034961-srbh8j8n1sjf1m9l03gi039v7cpevp8g.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.590656034961-srbh8j8n1sjf1m9l03gi039v7cpevp8g</string>
+	<key>API_KEY</key>
+	<string>AIzaSyC-AWATwzsSxBvV9IvMABUNqPPPZTE-ijk</string>
+	<key>GCM_SENDER_ID</key>
+	<string>590656034961</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.memeic.app</string>
+	<key>PROJECT_ID</key>
+	<string>memeic-777dd</string>
+	<key>STORAGE_BUCKET</key>
+	<string>memeic-777dd.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:590656034961:ios:3443ddbbdbec2a2e49c730</string>
+</dict>
+</plist>

@@ -7,7 +7,7 @@ enum ButtonType { primary, secondary, danger }
 
 enum ButtonState { enabled, disabled, loading }
 
-class BoxButton extends StatelessWidget {
+class BoxButton extends StatefulWidget {
   final String title;
   final ButtonType type;
   final ButtonState state;
@@ -49,10 +49,17 @@ class BoxButton extends StatelessWidget {
   }) : outline = true;
 
   @override
+  State<BoxButton> createState() => _BoxButtonState();
+}
+
+class _BoxButtonState extends State<BoxButton> {
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
     final Color baseColor = () {
-      if (color != null) return color!;
-      switch (type) {
+      if (widget.color != null) return widget.color!;
+      switch (widget.type) {
         case ButtonType.primary:
           return kcPrimaryColor;
         case ButtonType.secondary:
@@ -62,83 +69,127 @@ class BoxButton extends StatelessWidget {
       }
     }();
 
-    final bool isDisabled = state == ButtonState.disabled;
-    final bool isLoading = state == ButtonState.loading;
-    final Color fillColor = outline
+    final bool isDisabled = widget.state == ButtonState.disabled;
+    final bool isLoading = widget.state == ButtonState.loading;
+    final bool isEnabled = widget.state == ButtonState.enabled;
+    final Color fillColor = widget.outline
         ? Colors.transparent
         : (isDisabled ? baseColor.withOpacity(0.4) : baseColor);
     final Color borderColor = baseColor;
-    final Color labelColor = outline ? baseColor : Colors.white;
+    final Color labelColor = widget.outline ? baseColor : Colors.white;
 
     return GestureDetector(
-      onTap: state != ButtonState.disabled && state != ButtonState.loading
+      onTapDown: isEnabled
+          ? (_) {
+              setState(() {
+                _isPressed = true;
+              });
+            }
+          : null,
+      onTapUp: isEnabled
+          ? (_) {
+              // Reset pressed state immediately
+              Future.microtask(() {
+                if (mounted) {
+                  setState(() {
+                    _isPressed = false;
+                  });
+                }
+              });
+            }
+          : null,
+      onTapCancel: isEnabled
+          ? () {
+              setState(() {
+                _isPressed = false;
+              });
+            }
+          : null,
+      onTap: isEnabled
           ? () {
               // Haptic feedback tuned by type
-              if (type == ButtonType.danger) {
+              if (widget.type == ButtonType.danger) {
                 HapticFeedback.heavyImpact();
               } else {
                 HapticFeedback.selectionClick();
               }
-              onTap?.call();
+              widget.onTap?.call();
             }
           : null,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 350),
-        width: width,
-        height: height,
-        alignment: Alignment.center,
-        decoration: !outline
-            ? BoxDecoration(
-                color: fillColor,
-                borderRadius: BorderRadius.circular(borderRadius),
-              )
-            : BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.circular(borderRadius),
-                border: Border.all(color: borderColor, width: 1),
-              ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(borderRadius),
-            onTap: state == ButtonState.enabled ? onTap : null,
-            child: Container(
-              width: width,
-              height: height,
-              alignment: Alignment.center,
-              child: !isLoading
-                  ? Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (leading != null) leading!,
-                        if (leading != null) const SizedBox(width: 5),
-                        Flexible(
-                          child: Text(
-                            state == ButtonState.loading
-                                ? 'Processing...'
-                                : title,
-                            style: textStyle ??
-                                Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      fontWeight: outline
-                                          ? FontWeight.w500
-                                          : FontWeight.bold,
-                                      color: labelColor,
-                                      fontSize: 16.0,
-                                    ),
+        duration: const Duration(milliseconds: 150),
+        curve: Curves.easeInOut,
+        transform: Matrix4.identity()
+          ..scale(_isPressed ? 0.96 : 1.0)
+          ..translate(0.0, _isPressed ? 2.0 : 0.0),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 350),
+          width: widget.width,
+          height: widget.height,
+          alignment: Alignment.center,
+          decoration: !widget.outline
+              ? BoxDecoration(
+                  color: fillColor,
+                  borderRadius: BorderRadius.circular(widget.borderRadius),
+                )
+              : BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(widget.borderRadius),
+                  border: Border.all(color: borderColor, width: 1),
+                ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(widget.borderRadius),
+              onTap: isEnabled
+                  ? () {
+                      // Haptic feedback tuned by type
+                      if (widget.type == ButtonType.danger) {
+                        HapticFeedback.heavyImpact();
+                      } else {
+                        HapticFeedback.selectionClick();
+                      }
+                      widget.onTap?.call();
+                    }
+                  : null,
+              child: Container(
+                width: widget.width,
+                height: widget.height,
+                alignment: Alignment.center,
+                child: !isLoading
+                    ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (widget.leading != null) widget.leading!,
+                          if (widget.leading != null) const SizedBox(width: 5),
+                          Flexible(
+                            child: Text(
+                              widget.state == ButtonState.loading
+                                  ? 'Processing...'
+                                  : widget.title,
+                              style: widget.textStyle ??
+                                  Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                        fontWeight: widget.outline
+                                            ? FontWeight.w500
+                                            : FontWeight.bold,
+                                        color: labelColor,
+                                        fontSize: 16.0,
+                                      ),
+                            ),
                           ),
-                        ),
-                      ],
-                    )
-                  : const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CupertinoActivityIndicator(radius: 10.0),
-                        SizedBox(width: 8),
-                      ],
-                    ),
+                        ],
+                      )
+                    : const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CupertinoActivityIndicator(radius: 10.0),
+                          SizedBox(width: 8),
+                        ],
+                      ),
+              ),
             ),
           ),
         ),

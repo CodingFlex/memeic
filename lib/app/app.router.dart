@@ -5,22 +5,25 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:flutter/material.dart' as _i9;
+import 'package:flutter/material.dart' as _i10;
 import 'package:flutter/material.dart';
-import 'package:memeic/ui/views/favorites/favorites_view.dart' as _i6;
-import 'package:memeic/ui/views/home/home_view.dart' as _i4;
+import 'package:memeic/ui/views/favorites/favorites_view.dart' as _i7;
+import 'package:memeic/ui/views/home/home_view.dart' as _i5;
 import 'package:memeic/ui/views/main_navigation/main_navigation_view.dart'
-    as _i3;
-import 'package:memeic/ui/views/meme_detail/meme_detail_view.dart' as _i8;
-import 'package:memeic/ui/views/onboardingauth/onboardingauth_view.dart' as _i2;
-import 'package:memeic/ui/views/search/search_view.dart' as _i5;
-import 'package:memeic/ui/views/search/search_viewmodel.dart' as _i10;
-import 'package:memeic/ui/views/settings/settings_view.dart' as _i7;
+    as _i4;
+import 'package:memeic/ui/views/meme_detail/meme_detail_view.dart' as _i9;
+import 'package:memeic/ui/views/onboardingauth/onboardingauth_view.dart' as _i3;
+import 'package:memeic/ui/views/search/search_view.dart' as _i6;
+import 'package:memeic/ui/views/search/search_viewmodel.dart' as _i11;
+import 'package:memeic/ui/views/settings/settings_view.dart' as _i8;
+import 'package:memeic/ui/views/splash/splash_view.dart' as _i2;
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i11;
+import 'package:stacked_services/stacked_services.dart' as _i12;
 
 class Routes {
-  static const onboardingauthView = '/';
+  static const splashView = '/';
+
+  static const onboardingauthView = '/onboardingauth-view';
 
   static const mainNavigationView = '/main-navigation-view';
 
@@ -35,6 +38,7 @@ class Routes {
   static const memeDetailView = '/meme-detail-view';
 
   static const all = <String>{
+    splashView,
     onboardingauthView,
     mainNavigationView,
     homeView,
@@ -48,77 +52,90 @@ class Routes {
 class StackedRouter extends _i1.RouterBase {
   final _routes = <_i1.RouteDef>[
     _i1.RouteDef(
+      Routes.splashView,
+      page: _i2.SplashView,
+    ),
+    _i1.RouteDef(
       Routes.onboardingauthView,
-      page: _i2.OnboardingauthView,
+      page: _i3.OnboardingauthView,
     ),
     _i1.RouteDef(
       Routes.mainNavigationView,
-      page: _i3.MainNavigationView,
+      page: _i4.MainNavigationView,
     ),
     _i1.RouteDef(
       Routes.homeView,
-      page: _i4.HomeView,
+      page: _i5.HomeView,
     ),
     _i1.RouteDef(
       Routes.searchView,
-      page: _i5.SearchView,
+      page: _i6.SearchView,
     ),
     _i1.RouteDef(
       Routes.favoritesView,
-      page: _i6.FavoritesView,
+      page: _i7.FavoritesView,
     ),
     _i1.RouteDef(
       Routes.settingsView,
-      page: _i7.SettingsView,
+      page: _i8.SettingsView,
     ),
     _i1.RouteDef(
       Routes.memeDetailView,
-      page: _i8.MemeDetailView,
+      page: _i9.MemeDetailView,
     ),
   ];
 
   final _pagesMap = <Type, _i1.StackedRouteFactory>{
-    _i2.OnboardingauthView: (data) {
-      return _i9.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i2.OnboardingauthView(),
+    _i2.SplashView: (data) {
+      return _i10.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i2.SplashView(),
         settings: data,
       );
     },
-    _i3.MainNavigationView: (data) {
-      return _i9.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i3.MainNavigationView(),
+    _i3.OnboardingauthView: (data) {
+      return _i10.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i3.OnboardingauthView(),
         settings: data,
       );
     },
-    _i4.HomeView: (data) {
-      return _i9.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i4.HomeView(),
+    _i4.MainNavigationView: (data) {
+      return _i10.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i4.MainNavigationView(),
         settings: data,
       );
     },
-    _i5.SearchView: (data) {
-      return _i9.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i5.SearchView(),
+    _i5.HomeView: (data) {
+      return _i10.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i5.HomeView(),
         settings: data,
       );
     },
-    _i6.FavoritesView: (data) {
-      return _i9.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i6.FavoritesView(),
+    _i6.SearchView: (data) {
+      return _i10.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i6.SearchView(),
         settings: data,
       );
     },
-    _i7.SettingsView: (data) {
-      return _i9.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i7.SettingsView(),
+    _i7.FavoritesView: (data) {
+      return _i10.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i7.FavoritesView(),
         settings: data,
       );
     },
-    _i8.MemeDetailView: (data) {
+    _i8.SettingsView: (data) {
+      return _i10.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i8.SettingsView(),
+        settings: data,
+      );
+    },
+    _i9.MemeDetailView: (data) {
       final args = data.getArgs<MemeDetailViewArguments>(nullOk: false);
-      return _i9.MaterialPageRoute<dynamic>(
-        builder: (context) => _i8.MemeDetailView(
-            key: args.key, meme: args.meme, favoriteIds: args.favoriteIds),
+      return _i10.MaterialPageRoute<dynamic>(
+        builder: (context) => _i9.MemeDetailView(
+            key: args.key,
+            meme: args.meme,
+            favoriteIds: args.favoriteIds,
+            heroTag: args.heroTag),
         settings: data,
       );
     },
@@ -136,17 +153,20 @@ class MemeDetailViewArguments {
     this.key,
     required this.meme,
     this.favoriteIds,
+    this.heroTag,
   });
 
-  final _i9.Key? key;
+  final _i10.Key? key;
 
-  final _i10.MemeModel meme;
+  final _i11.MemeModel meme;
 
   final Set<String>? favoriteIds;
 
+  final String? heroTag;
+
   @override
   String toString() {
-    return '{"key": "$key", "meme": "$meme", "favoriteIds": "$favoriteIds"}';
+    return '{"key": "$key", "meme": "$meme", "favoriteIds": "$favoriteIds", "heroTag": "$heroTag"}';
   }
 
   @override
@@ -154,16 +174,34 @@ class MemeDetailViewArguments {
     if (identical(this, other)) return true;
     return other.key == key &&
         other.meme == meme &&
-        other.favoriteIds == favoriteIds;
+        other.favoriteIds == favoriteIds &&
+        other.heroTag == heroTag;
   }
 
   @override
   int get hashCode {
-    return key.hashCode ^ meme.hashCode ^ favoriteIds.hashCode;
+    return key.hashCode ^
+        meme.hashCode ^
+        favoriteIds.hashCode ^
+        heroTag.hashCode;
   }
 }
 
-extension NavigatorStateExtension on _i11.NavigationService {
+extension NavigatorStateExtension on _i12.NavigationService {
+  Future<dynamic> navigateToSplashView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.splashView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
   Future<dynamic> navigateToOnboardingauthView([
     int? routerId,
     bool preventDuplicates = true,
@@ -249,9 +287,10 @@ extension NavigatorStateExtension on _i11.NavigationService {
   }
 
   Future<dynamic> navigateToMemeDetailView({
-    _i9.Key? key,
-    required _i10.MemeModel meme,
+    _i10.Key? key,
+    required _i11.MemeModel meme,
     Set<String>? favoriteIds,
+    String? heroTag,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -260,7 +299,21 @@ extension NavigatorStateExtension on _i11.NavigationService {
   }) async {
     return navigateTo<dynamic>(Routes.memeDetailView,
         arguments: MemeDetailViewArguments(
-            key: key, meme: meme, favoriteIds: favoriteIds),
+            key: key, meme: meme, favoriteIds: favoriteIds, heroTag: heroTag),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithSplashView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.splashView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -352,9 +405,10 @@ extension NavigatorStateExtension on _i11.NavigationService {
   }
 
   Future<dynamic> replaceWithMemeDetailView({
-    _i9.Key? key,
-    required _i10.MemeModel meme,
+    _i10.Key? key,
+    required _i11.MemeModel meme,
     Set<String>? favoriteIds,
+    String? heroTag,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -363,7 +417,7 @@ extension NavigatorStateExtension on _i11.NavigationService {
   }) async {
     return replaceWith<dynamic>(Routes.memeDetailView,
         arguments: MemeDetailViewArguments(
-            key: key, meme: meme, favoriteIds: favoriteIds),
+            key: key, meme: meme, favoriteIds: favoriteIds, heroTag: heroTag),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

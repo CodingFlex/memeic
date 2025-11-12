@@ -48,7 +48,8 @@ class SearchBarWidget extends StatelessWidget {
               style: AppTextStyles.body(context, color: Colors.white),
               decoration: InputDecoration(
                 hintText: hintText,
-                hintStyle: AppTextStyles.body(context, color: kcPrimaryColorLight.withValues(alpha: 0.7)),
+                hintStyle: AppTextStyles.body(context,
+                    color: kcPrimaryColorLight.withValues(alpha: 0.7)),
                 border: InputBorder.none,
                 isDense: true,
                 contentPadding: EdgeInsets.zero,

@@ -60,4 +60,3 @@ class TrendingMoodItem extends StatelessWidget {
     );
   }
 }
-

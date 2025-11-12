@@ -63,7 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '590656034961',
     projectId: 'memeic-777dd',
     storageBucket: 'memeic-777dd.firebasestorage.app',
-    iosClientId: '590656034961-srbh8j8n1sjf1m9l03gi039v7cpevp8g.apps.googleusercontent.com',
+    iosClientId:
+        '590656034961-srbh8j8n1sjf1m9l03gi039v7cpevp8g.apps.googleusercontent.com',
     iosBundleId: 'com.memeic.app',
   );
 }

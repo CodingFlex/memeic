@@ -104,48 +104,45 @@ class HomeViewModel extends BaseViewModel {
   /// Load categories from TagsService
   ///
   /// How it works:
-  /// 1. Fetches top categories from Supabase via TagsService
-  /// 2. Converts categories to MoodModel objects with emojis
-  /// 3. Updates the UI to show categories as mood chips
+  /// 1. First tries to load from cache (instant, no network call)
+  /// 2. Only fetches from Supabase if cache is empty
+  /// 3. Converts categories to MoodModel objects with emojis
+  /// 4. Updates the UI to show categories as mood chips
   ///
-  /// This is called when the view initializes to populate mood chips
+  /// This is called when the view initializes to populate mood chips.
+  /// Data is loaded once and retained on subsequent navigations.
   Future<void> _loadCategories() async {
     try {
+      // First, try to load from cache (instant, no network call)
+      final cachedCategories = _tagsService.getTopCachedCategories(limit: 10);
+      if (cachedCategories.isNotEmpty) {
+        _moodChips = cachedCategories.map((category) {
+          return MoodModel(
+            emoji: category.emoji ?? '',
+            label: category.category,
+          );
+        }).toList();
+        notifyListeners();
+        _logger.d('Loaded ${_moodChips.length} categories from cache');
+        return;
+      }
+
+      // Cache is empty, fetch from network
       setBusyForObject('categories', true);
-      _logger.d('Loading categories from TagsService');
-      // Get top 10 categories (most popular by count)
+      _logger.d('Cache empty, fetching categories from Supabase');
       final categories = await _tagsService.getTopCategories(limit: 10);
 
-      // Convert categories to MoodModel objects with emojis from database
       _moodChips = categories.map((category) {
         return MoodModel(
-          emoji: category.emoji ??
-              '', // Use emoji from database, empty if not available
+          emoji: category.emoji ?? '',
           label: category.category,
         );
       }).toList();
 
       notifyListeners();
-      _logger.d('Loaded ${_moodChips.length} categories as mood chips');
+      _logger.d('Loaded ${_moodChips.length} categories from Supabase');
     } catch (e, stackTrace) {
       _logger.e('Error loading categories: $e', e, stackTrace);
-      // Fall back to cached categories if available
-      try {
-        final cachedCategories = _tagsService.getTopCachedCategories(limit: 10);
-        if (cachedCategories.isNotEmpty) {
-          _moodChips = cachedCategories.map((category) {
-            return MoodModel(
-              emoji: category.emoji ??
-                  '', // Use emoji from database, empty if not available
-              label: category.category,
-            );
-          }).toList();
-          notifyListeners();
-          _logger.d('Using ${_moodChips.length} cached categories');
-        }
-      } catch (cacheError) {
-        _logger.e('Error loading cached categories: $cacheError');
-      }
     } finally {
       setBusyForObject('categories', false);
     }

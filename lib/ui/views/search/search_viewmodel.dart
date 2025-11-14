@@ -119,50 +119,47 @@ class SearchViewModel extends BaseViewModel {
   /// Load tags from TagsService
   ///
   /// How it works:
-  /// 1. Fetches top 15 tags from Supabase via TagsService (sorted by count)
-  /// 2. Converts tags to MoodModel objects with emojis and counts
-  /// 3. Updates the UI to show tags as mood chips
+  /// 1. First tries to load from cache (instant, no network call)
+  /// 2. Only fetches from Supabase if cache is empty
+  /// 3. Converts tags to MoodModel objects with emojis and counts
+  /// 4. Updates the UI to show tags as mood chips
   ///
-  /// This is called when the view initializes to populate mood chips
+  /// This is called when the view initializes to populate mood chips.
+  /// Data is loaded once and retained on subsequent navigations.
   Future<void> _loadTags() async {
     try {
+      // First, try to load from cache (instant, no network call)
+      final cachedTags = _tagsService.getTopCachedTags(limit: 15);
+      if (cachedTags.isNotEmpty) {
+        _popularMoods = cachedTags.map((tag) {
+          return MoodModel(
+            emoji: tag.emoji ?? '',
+            label: tag.tag,
+            percentage: tag.count,
+          );
+        }).toList();
+        notifyListeners();
+        _logger.d('Loaded ${_popularMoods.length} tags from cache');
+        return;
+      }
+
+      // Cache is empty, fetch from network
       setBusyForObject('tags', true);
-      _logger.d('Loading top tags from TagsService');
-      // Get top 15 tags (most popular by count)
+      _logger.d('Cache empty, fetching tags from Supabase');
       final tags = await _tagsService.getTopTags(limit: 15);
 
-      // Convert tags to MoodModel objects with emojis from database
       _popularMoods = tags.map((tag) {
         return MoodModel(
-          emoji: tag.emoji ??
-              '', // Use emoji from database, empty if not available
+          emoji: tag.emoji ?? '',
           label: tag.tag,
-          percentage: tag.count, // Store count in percentage field
+          percentage: tag.count,
         );
       }).toList();
 
       notifyListeners();
-      _logger.d('Loaded ${_popularMoods.length} top tags as mood chips');
+      _logger.d('Loaded ${_popularMoods.length} tags from Supabase');
     } catch (e, stackTrace) {
       _logger.e('Error loading tags: $e', e, stackTrace);
-      // Fall back to cached tags if available
-      try {
-        final cachedTags = _tagsService.getTopCachedTags(limit: 15);
-        if (cachedTags.isNotEmpty) {
-          _popularMoods = cachedTags.map((tag) {
-            return MoodModel(
-              emoji: tag.emoji ??
-                  '', // Use emoji from database, empty if not available
-              label: tag.tag,
-              percentage: tag.count, // Store count in percentage field
-            );
-          }).toList();
-          notifyListeners();
-          _logger.d('Using ${_popularMoods.length} cached top tags');
-        }
-      } catch (cacheError) {
-        _logger.e('Error loading cached tags: $cacheError');
-      }
     } finally {
       setBusyForObject('tags', false);
     }
@@ -171,52 +168,49 @@ class SearchViewModel extends BaseViewModel {
   /// Load trending categories from TagsService
   ///
   /// How it works:
-  /// 1. Fetches 4 random categories from Supabase via TagsService
-  /// 2. Converts categories to MoodModel objects with emojis and counts
-  /// 3. Updates the UI to show trending categories
+  /// 1. First tries to load from cache (instant, no network call)
+  /// 2. Only fetches from Supabase if cache is empty
+  /// 3. Converts categories to MoodModel objects with emojis and counts
+  /// 4. Updates the UI to show trending categories
   ///
-  /// This is called when the view initializes to populate trending section
+  /// This is called when the view initializes to populate trending section.
+  /// Data is loaded once and retained on subsequent navigations.
   Future<void> _loadTrendingCategories() async {
     try {
+      // First, try to load from cache (instant, no network call)
+      final cachedCategories = _tagsService.getRandomCachedCategories(count: 4);
+      if (cachedCategories.isNotEmpty) {
+        _trendingMoods = cachedCategories.map((category) {
+          return MoodModel(
+            emoji: category.emoji ?? '',
+            label: category.category,
+            percentage: category.count,
+          );
+        }).toList();
+        notifyListeners();
+        _logger.d(
+            'Loaded ${_trendingMoods.length} trending categories from cache');
+        return;
+      }
+
+      // Cache is empty, fetch from network
       setBusyForObject('categories', true);
-      _logger.d('Loading trending categories from TagsService');
-      // Get 4 random categories from top 20
+      _logger.d('Cache empty, fetching trending categories from Supabase');
       final categories = await _tagsService.getRandomCategories(count: 4);
 
-      // Convert categories to MoodModel objects with emojis from database
       _trendingMoods = categories.map((category) {
         return MoodModel(
-          emoji: category.emoji ??
-              '', // Use emoji from database, empty if not available
+          emoji: category.emoji ?? '',
           label: category.category,
-          percentage: category.count, // Store count in percentage field
+          percentage: category.count,
         );
       }).toList();
 
       notifyListeners();
-      _logger.d('Loaded ${_trendingMoods.length} trending categories');
+      _logger.d(
+          'Loaded ${_trendingMoods.length} trending categories from Supabase');
     } catch (e, stackTrace) {
       _logger.e('Error loading trending categories: $e', e, stackTrace);
-      // Fall back to cached categories if available
-      try {
-        final cachedCategories =
-            _tagsService.getRandomCachedCategories(count: 4);
-        if (cachedCategories.isNotEmpty) {
-          _trendingMoods = cachedCategories.map((category) {
-            return MoodModel(
-              emoji: category.emoji ??
-                  '', // Use emoji from database, empty if not available
-              label: category.category,
-              percentage: category.count, // Store count in percentage field
-            );
-          }).toList();
-          notifyListeners();
-          _logger
-              .d('Using ${_trendingMoods.length} cached trending categories');
-        }
-      } catch (cacheError) {
-        _logger.e('Error loading cached trending categories: $cacheError');
-      }
     } finally {
       setBusyForObject('categories', false);
     }

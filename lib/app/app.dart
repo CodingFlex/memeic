@@ -15,6 +15,8 @@ import 'package:memeic/services/firebase_service.dart';
 import 'package:memeic/services/hive_service.dart';
 import 'package:memeic/ui/common/toast.dart';
 import 'package:memeic/services/meme_service.dart';
+import 'package:memeic/services/tags_service.dart';
+import 'package:memeic/services/user_service.dart';
 // @stacked-import
 
 @StackedApp(
@@ -38,6 +40,8 @@ import 'package:memeic/services/meme_service.dart';
     LazySingleton(classType: HiveService),
     LazySingleton(classType: ToastService),
     LazySingleton(classType: MemeService),
+    LazySingleton(classType: TagsService),
+    LazySingleton(classType: UserService),
 // @stacked-service
   ],
   bottomsheets: [

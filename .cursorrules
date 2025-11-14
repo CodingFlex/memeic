@@ -17,6 +17,7 @@ Always:
 - Always use `AppTextStyles` for all text styling, never `Theme.of(context).textTheme` directly.
 - Always use FontAwesome icons (`font_awesome_flutter`) instead of Material icons (`Icons.*`).
 - Always use `ui_helpers.dart` for spacing and sizing (e.g., `verticalSpaceSmall`, `horizontalSpaceMedium`, `screenWidth()`, etc.) instead of hardcoded `SizedBox` values.
+- Always use Stacked's `setBusy()` and `busy` state for general loading states instead of manually creating `_isLoading` variables. For specific loading states, use `setBusyForObject('ObjectName', true/false)` and create getters like `bool get isObjectBusy => busy('ObjectName')`. If multiple simultaneous loading states are needed, create a combined getter that checks all `setBusyForObject` states (e.g., `bool get isAnyLoading => isLoading || isLoadingTags || isLoadingCategories`).
 
 Models:
 - Always use `freezed` and `json_serializable` style with `freezed_annotation` for models.

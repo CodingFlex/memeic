@@ -4,6 +4,7 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:logger/logger.dart';
 import 'package:memeic/app/app.locator.dart';
 import 'package:memeic/services/hive_service.dart';
+import 'package:memeic/services/tags_service.dart';
 
 class MemeModel {
   final String id;
@@ -37,10 +38,16 @@ class SearchViewModel extends BaseViewModel {
   final _logger = Logger();
   final _navigationService = locator<NavigationService>();
   final _hiveService = locator<HiveService>();
+  final _tagsService = locator<TagsService>();
   final searchController = TextEditingController();
 
-  bool _isLoading = false;
-  bool get isLoading => _isLoading;
+  // Loading state getters using setBusyForObject
+  bool get isLoading => busy('search');
+  bool get isLoadingTags => busy('tags');
+  bool get isLoadingCategories => busy('categories');
+
+  // Combined loading state for when any operation is in progress
+  bool get isAnyLoading => isLoading || isLoadingTags || isLoadingCategories;
 
   List<MemeModel> _memes = [];
   List<MemeModel> get memes => _memes;
@@ -55,30 +62,18 @@ class SearchViewModel extends BaseViewModel {
   bool _showTrending = true;
   bool get showTrending => _showTrending;
 
-  final List<MoodModel> trendingMoods = [
-    MoodModel(emoji: '😩', label: 'Monday mood', percentage: 25),
-    MoodModel(emoji: '💃', label: 'Happy dance', percentage: 18),
-    MoodModel(emoji: '🤔', label: 'Confused', percentage: 12),
-    MoodModel(emoji: '🎉', label: 'Celebrating', percentage: 30),
-  ];
+  List<MoodModel> _trendingMoods = [];
+  List<MoodModel> get trendingMoods => _trendingMoods;
 
-  final List<MoodModel> popularMoods = [
-    MoodModel(emoji: '', label: 'Funny'),
-    MoodModel(emoji: '', label: 'Relatable'),
-    MoodModel(emoji: '', label: 'Confused'),
-    MoodModel(emoji: '', label: 'Happy'),
-    MoodModel(emoji: '', label: 'Savage'),
-    MoodModel(emoji: '', label: 'Wholesome'),
-    MoodModel(emoji: '', label: 'Sad'),
-    MoodModel(emoji: '', label: 'Surprised'),
-    MoodModel(emoji: '', label: 'Thinking'),
-    MoodModel(emoji: '', label: 'Celebrating'),
-  ];
+  List<MoodModel> _popularMoods = [];
+  List<MoodModel> get popularMoods => _popularMoods;
 
   SearchViewModel() {
     // Load favorites and search history when view is created
     _loadFavorites();
     _loadSearchHistory();
+    _loadTags();
+    _loadTrendingCategories();
   }
 
   @override
@@ -121,6 +116,112 @@ class SearchViewModel extends BaseViewModel {
     }
   }
 
+  /// Load tags from TagsService
+  ///
+  /// How it works:
+  /// 1. Fetches top 15 tags from Supabase via TagsService (sorted by count)
+  /// 2. Converts tags to MoodModel objects with emojis and counts
+  /// 3. Updates the UI to show tags as mood chips
+  ///
+  /// This is called when the view initializes to populate mood chips
+  Future<void> _loadTags() async {
+    try {
+      setBusyForObject('tags', true);
+      _logger.d('Loading top tags from TagsService');
+      // Get top 15 tags (most popular by count)
+      final tags = await _tagsService.getTopTags(limit: 15);
+
+      // Convert tags to MoodModel objects with emojis from database
+      _popularMoods = tags.map((tag) {
+        return MoodModel(
+          emoji: tag.emoji ??
+              '', // Use emoji from database, empty if not available
+          label: tag.tag,
+          percentage: tag.count, // Store count in percentage field
+        );
+      }).toList();
+
+      notifyListeners();
+      _logger.d('Loaded ${_popularMoods.length} top tags as mood chips');
+    } catch (e, stackTrace) {
+      _logger.e('Error loading tags: $e', e, stackTrace);
+      // Fall back to cached tags if available
+      try {
+        final cachedTags = _tagsService.getTopCachedTags(limit: 15);
+        if (cachedTags.isNotEmpty) {
+          _popularMoods = cachedTags.map((tag) {
+            return MoodModel(
+              emoji: tag.emoji ??
+                  '', // Use emoji from database, empty if not available
+              label: tag.tag,
+              percentage: tag.count, // Store count in percentage field
+            );
+          }).toList();
+          notifyListeners();
+          _logger.d('Using ${_popularMoods.length} cached top tags');
+        }
+      } catch (cacheError) {
+        _logger.e('Error loading cached tags: $cacheError');
+      }
+    } finally {
+      setBusyForObject('tags', false);
+    }
+  }
+
+  /// Load trending categories from TagsService
+  ///
+  /// How it works:
+  /// 1. Fetches 4 random categories from Supabase via TagsService
+  /// 2. Converts categories to MoodModel objects with emojis and counts
+  /// 3. Updates the UI to show trending categories
+  ///
+  /// This is called when the view initializes to populate trending section
+  Future<void> _loadTrendingCategories() async {
+    try {
+      setBusyForObject('categories', true);
+      _logger.d('Loading trending categories from TagsService');
+      // Get 4 random categories from top 20
+      final categories = await _tagsService.getRandomCategories(count: 4);
+
+      // Convert categories to MoodModel objects with emojis from database
+      _trendingMoods = categories.map((category) {
+        return MoodModel(
+          emoji: category.emoji ??
+              '', // Use emoji from database, empty if not available
+          label: category.category,
+          percentage: category.count, // Store count in percentage field
+        );
+      }).toList();
+
+      notifyListeners();
+      _logger.d('Loaded ${_trendingMoods.length} trending categories');
+    } catch (e, stackTrace) {
+      _logger.e('Error loading trending categories: $e', e, stackTrace);
+      // Fall back to cached categories if available
+      try {
+        final cachedCategories =
+            _tagsService.getRandomCachedCategories(count: 4);
+        if (cachedCategories.isNotEmpty) {
+          _trendingMoods = cachedCategories.map((category) {
+            return MoodModel(
+              emoji: category.emoji ??
+                  '', // Use emoji from database, empty if not available
+              label: category.category,
+              percentage: category.count, // Store count in percentage field
+            );
+          }).toList();
+          notifyListeners();
+          _logger
+              .d('Using ${_trendingMoods.length} cached trending categories');
+        }
+      } catch (cacheError) {
+        _logger.e('Error loading cached trending categories: $cacheError');
+      }
+    } finally {
+      setBusyForObject('categories', false);
+    }
+  }
+
   void onSearchChanged(String query) {
     _logger.d('Search query changed: $query');
     _showTrending = query.isEmpty;
@@ -145,10 +246,8 @@ class SearchViewModel extends BaseViewModel {
   }
 
   Future<void> _performSearch(String query) async {
-    _isLoading = true;
-    notifyListeners();
-
     try {
+      setBusyForObject('search', true);
       // Simulate API call with placeholder meme images
       await Future.delayed(const Duration(seconds: 1));
 
@@ -204,11 +303,11 @@ class SearchViewModel extends BaseViewModel {
 
       // Reload search history to update UI
       _loadSearchHistory();
+      notifyListeners();
     } catch (e, stackTrace) {
       _logger.e('Error performing search: $e', e, stackTrace);
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      setBusyForObject('search', false);
     }
   }
 

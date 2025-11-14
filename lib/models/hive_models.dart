@@ -9,6 +9,8 @@
 /// "This is what a Search History entry looks like".
 
 import 'package:hive/hive.dart';
+import 'package:memeic/models/tag/tag_with_count.dart';
+import 'package:memeic/models/category/category_with_count.dart';
 
 /// Part files are used by Hive's code generator to create the adapter
 /// Think of it like a template that Hive uses to know how to save/load data
@@ -32,6 +34,14 @@ class HiveBoxes {
   // Box for caching memes for offline viewing
   // Think of this as a drawer labeled "Offline Memes Cache"
   static const String memeCache = 'memeCache';
+
+  // Box for storing tags for offline access
+  // Think of this as a drawer labeled "Tags Cache"
+  static const String tags = 'tags';
+
+  // Box for storing categories for offline access
+  // Think of this as a drawer labeled "Categories Cache"
+  static const String categories = 'categories';
 }
 
 /// HiveType annotation tells Hive: "This is a type I want to store"
@@ -183,6 +193,98 @@ class HiveUserPreferences extends HiveObject {
       maxSearchHistoryItems:
           maxSearchHistoryItems ?? this.maxSearchHistoryItems,
       enableNotifications: enableNotifications ?? this.enableNotifications,
+    );
+  }
+}
+
+/// HiveType for storing tags with counts
+/// Think of this as a cache of all available tags for offline access
+@HiveType(typeId: 3)
+class HiveTagWithCount extends HiveObject {
+  @HiveField(0)
+  final String tag; // The tag name
+
+  @HiveField(1)
+  final int count; // How many memes have this tag
+
+  @HiveField(2)
+  final String? emoji; // Emoji from database, optional
+
+  @HiveField(3)
+  final DateTime? cachedAt; // When this tag was cached
+
+  HiveTagWithCount({
+    required this.tag,
+    required this.count,
+    this.emoji,
+    this.cachedAt,
+  });
+
+  /// Convert from TagWithCount model
+  factory HiveTagWithCount.fromTagWithCount(
+    TagWithCount tagWithCount, {
+    DateTime? cachedAt,
+  }) {
+    return HiveTagWithCount(
+      tag: tagWithCount.tag,
+      count: tagWithCount.count,
+      emoji: tagWithCount.emoji,
+      cachedAt: cachedAt ?? DateTime.now(),
+    );
+  }
+
+  /// Convert to TagWithCount model
+  TagWithCount toTagWithCount() {
+    return TagWithCount(
+      tag: tag,
+      count: count,
+      emoji: emoji,
+    );
+  }
+}
+
+/// HiveType for storing categories with counts
+/// Think of this as a cache of all available categories for offline access
+@HiveType(typeId: 4)
+class HiveCategoryWithCount extends HiveObject {
+  @HiveField(0)
+  final String category; // The category name
+
+  @HiveField(1)
+  final int count; // How many memes have this category
+
+  @HiveField(2)
+  final String? emoji; // Emoji from database, optional
+
+  @HiveField(3)
+  final DateTime? cachedAt; // When this category was cached
+
+  HiveCategoryWithCount({
+    required this.category,
+    required this.count,
+    this.emoji,
+    this.cachedAt,
+  });
+
+  /// Convert from CategoryWithCount model
+  factory HiveCategoryWithCount.fromCategoryWithCount(
+    CategoryWithCount categoryWithCount, {
+    DateTime? cachedAt,
+  }) {
+    return HiveCategoryWithCount(
+      category: categoryWithCount.category,
+      count: categoryWithCount.count,
+      emoji: categoryWithCount.emoji,
+      cachedAt: cachedAt ?? DateTime.now(),
+    );
+  }
+
+  /// Convert to CategoryWithCount model
+  CategoryWithCount toCategoryWithCount() {
+    return CategoryWithCount(
+      category: category,
+      count: count,
+      emoji: emoji,
     );
   }
 }

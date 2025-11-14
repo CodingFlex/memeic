@@ -15,6 +15,8 @@ import '../services/auth_service.dart';
 import '../services/firebase_service.dart';
 import '../services/hive_service.dart';
 import '../services/meme_service.dart';
+import '../services/tags_service.dart';
+import '../services/user_service.dart';
 import '../ui/common/toast.dart';
 
 final locator = StackedLocator.instance;
@@ -36,4 +38,6 @@ Future<void> setupLocator({
   locator.registerLazySingleton(() => HiveService());
   locator.registerLazySingleton(() => ToastService());
   locator.registerLazySingleton(() => MemeService());
+  locator.registerLazySingleton(() => TagsService());
+  locator.registerLazySingleton(() => UserService());
 }

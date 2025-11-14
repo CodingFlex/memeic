@@ -24,6 +24,8 @@ class HiveService {
   Box<HiveSearchHistory>? _searchHistoryBox;
   Box<HiveUserPreferences>? _preferencesBox;
   Box<HiveMemeModel>? _memeCacheBox;
+  Box<HiveTagWithCount>? _tagsBox;
+  Box<HiveCategoryWithCount>? _categoriesBox;
 
   /// Getters - These let other parts of the app access the boxes
   /// Think of them as asking: "Can I see the favorites drawer?"
@@ -55,6 +57,20 @@ class HiveService {
     return _memeCacheBox!;
   }
 
+  Box<HiveTagWithCount> get tagsBox {
+    if (_tagsBox == null) {
+      throw Exception('HiveService not initialized. Call initialize() first.');
+    }
+    return _tagsBox!;
+  }
+
+  Box<HiveCategoryWithCount> get categoriesBox {
+    if (_categoriesBox == null) {
+      throw Exception('HiveService not initialized. Call initialize() first.');
+    }
+    return _categoriesBox!;
+  }
+
   /// Static initialization - Sets up Hive framework (must be called once, before any HiveService instance)
   ///
   /// What happens here:
@@ -84,6 +100,12 @@ class HiveService {
       }
       if (!Hive.isAdapterRegistered(2)) {
         Hive.registerAdapter(HiveUserPreferencesAdapter());
+      }
+      if (!Hive.isAdapterRegistered(3)) {
+        Hive.registerAdapter(HiveTagWithCountAdapter());
+      }
+      if (!Hive.isAdapterRegistered(4)) {
+        Hive.registerAdapter(HiveCategoryWithCountAdapter());
       }
     } catch (e, stackTrace) {
       Logger().e('Failed to initialize Hive framework', e, stackTrace);
@@ -136,6 +158,13 @@ class HiveService {
 
     // Open meme cache box - stores memes for offline viewing
     _memeCacheBox = await Hive.openBox<HiveMemeModel>(HiveBoxes.memeCache);
+
+    // Open tags box - stores tags for offline access
+    _tagsBox = await Hive.openBox<HiveTagWithCount>(HiveBoxes.tags);
+
+    // Open categories box - stores categories for offline access
+    _categoriesBox =
+        await Hive.openBox<HiveCategoryWithCount>(HiveBoxes.categories);
 
     // Initialize default preferences if they don't exist
     // Think of this as creating a default settings file if one doesn't exist
@@ -480,6 +509,8 @@ class HiveService {
       await _searchHistoryBox?.close();
       await _preferencesBox?.close();
       await _memeCacheBox?.close();
+      await _tagsBox?.close();
+      await _categoriesBox?.close();
       _logger.d('Closed all Hive boxes');
     } catch (e, stackTrace) {
       _logger.e('Failed to close boxes', e, stackTrace);
@@ -501,6 +532,8 @@ class HiveService {
       await Hive.deleteBoxFromDisk(HiveBoxes.searchHistory);
       await Hive.deleteBoxFromDisk(HiveBoxes.preferences);
       await Hive.deleteBoxFromDisk(HiveBoxes.memeCache);
+      await Hive.deleteBoxFromDisk(HiveBoxes.tags);
+      await Hive.deleteBoxFromDisk(HiveBoxes.categories);
       _logger.d('Deleted all Hive data');
     } catch (e, stackTrace) {
       _logger.e('Failed to delete all data', e, stackTrace);

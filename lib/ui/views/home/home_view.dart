@@ -92,11 +92,13 @@ class HomeView extends StackedView<HomeViewModel> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(
-                                  mood.emoji,
-                                  style: TextStyle(fontSize: 16.sp),
-                                ),
-                                const SizedBox(width: 6),
+                                if (mood.emoji.isNotEmpty) ...[
+                                  Text(
+                                    mood.emoji,
+                                    style: TextStyle(fontSize: 16.sp),
+                                  ),
+                                  const SizedBox(width: 6),
+                                ],
                                 Text(
                                   mood.label,
                                   style: AppTextStyles.body(context,

@@ -126,24 +126,46 @@ class SearchView extends StackedView<SearchViewModel> {
                         ],
                       ),
                       verticalSpaceSmall,
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          final chipWidth = (constraints.maxWidth - 16) / 3;
-                          return Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: viewModel.popularMoods.map((mood) {
-                              return SizedBox(
-                                width: chipWidth,
-                                child: PopularMoodChip(
-                                  label: mood.label,
-                                  onTap: () => viewModel.onMoodSelected(mood),
-                                ),
-                              );
-                            }).toList(),
-                          );
-                        },
-                      ),
+                      if (viewModel.isLoadingTags ||
+                          viewModel.isLoadingCategories)
+                        Wrap(
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: List.generate(9, (index) {
+                            return Container(
+                              height: 40,
+                              width: 100,
+                              decoration: BoxDecoration(
+                                color: kcDarkGreyColor,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            );
+                          }),
+                        )
+                      else if (viewModel.popularMoods.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Text(
+                            'No tags available',
+                            style: AppTextStyles.body(
+                              context,
+                              color: kcMediumGrey,
+                            ),
+                          ),
+                        )
+                      else
+                        Wrap(
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: viewModel.popularMoods.map((mood) {
+                            return PopularMoodChip(
+                              label: mood.label,
+                              emoji: mood.emoji,
+                              count: mood.percentage,
+                              onTap: () => viewModel.onMoodSelected(mood),
+                            );
+                          }).toList(),
+                        ),
                       verticalSpaceLarge,
                     ],
                     if (viewModel.isLoading)

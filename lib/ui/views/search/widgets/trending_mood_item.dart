@@ -31,11 +31,13 @@ class TrendingMoodItem extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Text(
-              emoji,
-              style: TextStyle(fontSize: 24.sp),
-            ),
-            horizontalSpaceSmall,
+            if (emoji.isNotEmpty) ...[
+              Text(
+                emoji,
+                style: TextStyle(fontSize: 24.sp),
+              ),
+              horizontalSpaceSmall,
+            ],
             Expanded(
               child: Text(
                 label,

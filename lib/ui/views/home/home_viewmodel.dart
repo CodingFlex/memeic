@@ -6,14 +6,20 @@ import 'package:memeic/app/app.locator.dart';
 import 'package:memeic/ui/views/search/search_viewmodel.dart';
 import 'package:memeic/ui/views/meme_detail/meme_detail_view.dart';
 import 'package:memeic/ui/views/search/search_view.dart';
+import 'package:memeic/services/tags_service.dart';
 
 class HomeViewModel extends BaseViewModel {
   final _logger = Logger();
   final _navigationService = locator<NavigationService>();
+  final _tagsService = locator<TagsService>();
   final searchController = TextEditingController();
 
-  bool _isLoading = false;
-  bool get isLoading => _isLoading;
+  // Loading state getters using setBusyForObject
+  bool get isLoading => busy('memes');
+  bool get isLoadingCategories => busy('categories');
+
+  // Combined loading state for when any operation is in progress
+  bool get isAnyLoading => isLoading || isLoadingCategories;
 
   final Set<String> _favoriteIds = {};
 
@@ -23,21 +29,12 @@ class HomeViewModel extends BaseViewModel {
   int _selectedMoodIndex = 0;
   int get selectedMoodIndex => _selectedMoodIndex;
 
-  final List<MoodModel> moodChips = [
-    MoodModel(emoji: '😂', label: 'Funny'),
-    MoodModel(emoji: '🤔', label: 'Confused'),
-    MoodModel(emoji: '😎', label: 'Savage'),
-    MoodModel(emoji: '❤️', label: 'Love'),
-    MoodModel(emoji: '😡', label: 'Angry'),
-    MoodModel(emoji: '😲', label: 'Shocked'),
-    MoodModel(emoji: '😊', label: 'Happy'),
-    MoodModel(emoji: '😢', label: 'Sad'),
-    MoodModel(emoji: '🤣', label: 'LOL'),
-    MoodModel(emoji: '😴', label: 'Sleepy'),
-  ];
+  List<MoodModel> _moodChips = [];
+  List<MoodModel> get moodChips => _moodChips;
 
   HomeViewModel() {
     _loadTrendingMemes();
+    _loadCategories();
   }
 
   @override
@@ -47,10 +44,8 @@ class HomeViewModel extends BaseViewModel {
   }
 
   Future<void> _loadTrendingMemes() async {
-    _isLoading = true;
-    notifyListeners();
-
     try {
+      setBusyForObject('memes', true);
       // Simulate API call with placeholder trending memes
       await Future.delayed(const Duration(seconds: 1));
 
@@ -98,19 +93,71 @@ class HomeViewModel extends BaseViewModel {
           showPreview: true,
         ),
       ];
+      notifyListeners();
     } catch (e) {
       _logger.e('Error loading trending memes: $e');
     } finally {
-      _isLoading = false;
+      setBusyForObject('memes', false);
+    }
+  }
+
+  /// Load categories from TagsService
+  ///
+  /// How it works:
+  /// 1. Fetches top categories from Supabase via TagsService
+  /// 2. Converts categories to MoodModel objects with emojis
+  /// 3. Updates the UI to show categories as mood chips
+  ///
+  /// This is called when the view initializes to populate mood chips
+  Future<void> _loadCategories() async {
+    try {
+      setBusyForObject('categories', true);
+      _logger.d('Loading categories from TagsService');
+      // Get top 10 categories (most popular by count)
+      final categories = await _tagsService.getTopCategories(limit: 10);
+
+      // Convert categories to MoodModel objects with emojis from database
+      _moodChips = categories.map((category) {
+        return MoodModel(
+          emoji: category.emoji ??
+              '', // Use emoji from database, empty if not available
+          label: category.category,
+        );
+      }).toList();
+
       notifyListeners();
+      _logger.d('Loaded ${_moodChips.length} categories as mood chips');
+    } catch (e, stackTrace) {
+      _logger.e('Error loading categories: $e', e, stackTrace);
+      // Fall back to cached categories if available
+      try {
+        final cachedCategories = _tagsService.getTopCachedCategories(limit: 10);
+        if (cachedCategories.isNotEmpty) {
+          _moodChips = cachedCategories.map((category) {
+            return MoodModel(
+              emoji: category.emoji ??
+                  '', // Use emoji from database, empty if not available
+              label: category.category,
+            );
+          }).toList();
+          notifyListeners();
+          _logger.d('Using ${_moodChips.length} cached categories');
+        }
+      } catch (cacheError) {
+        _logger.e('Error loading cached categories: $cacheError');
+      }
+    } finally {
+      setBusyForObject('categories', false);
     }
   }
 
   void selectMood(int index) {
-    _selectedMoodIndex = index;
-    _logger.d('Mood selected: ${moodChips[index].label}');
-    notifyListeners();
-    // TODO: Filter memes by selected mood
+    if (index >= 0 && index < _moodChips.length) {
+      _selectedMoodIndex = index;
+      _logger.d('Mood selected: ${_moodChips[index].label}');
+      notifyListeners();
+      // TODO: Filter memes by selected mood/category
+    }
   }
 
   void onSearchChanged(String query) {

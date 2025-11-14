@@ -140,3 +140,89 @@ class HiveUserPreferencesAdapter extends TypeAdapter<HiveUserPreferences> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+class HiveTagWithCountAdapter extends TypeAdapter<HiveTagWithCount> {
+  @override
+  final int typeId = 3;
+
+  @override
+  HiveTagWithCount read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return HiveTagWithCount(
+      tag: fields[0] as String,
+      count: fields[1] as int,
+      emoji: fields[2] as String?,
+      cachedAt: fields[3] as DateTime?,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, HiveTagWithCount obj) {
+    writer
+      ..writeByte(4)
+      ..writeByte(0)
+      ..write(obj.tag)
+      ..writeByte(1)
+      ..write(obj.count)
+      ..writeByte(2)
+      ..write(obj.emoji)
+      ..writeByte(3)
+      ..write(obj.cachedAt);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HiveTagWithCountAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class HiveCategoryWithCountAdapter extends TypeAdapter<HiveCategoryWithCount> {
+  @override
+  final int typeId = 4;
+
+  @override
+  HiveCategoryWithCount read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return HiveCategoryWithCount(
+      category: fields[0] as String,
+      count: fields[1] as int,
+      emoji: fields[2] as String?,
+      cachedAt: fields[3] as DateTime?,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, HiveCategoryWithCount obj) {
+    writer
+      ..writeByte(4)
+      ..writeByte(0)
+      ..write(obj.category)
+      ..writeByte(1)
+      ..write(obj.count)
+      ..writeByte(2)
+      ..write(obj.emoji)
+      ..writeByte(3)
+      ..write(obj.cachedAt);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HiveCategoryWithCountAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
